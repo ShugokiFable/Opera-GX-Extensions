@@ -7,7 +7,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const manifestPath = path.join(root, "manifest.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 if (manifest.manifest_version !== 3) throw new Error("Manifest must be v3");
-if (manifest.version !== "1.2.0") throw new Error(`Expected build version 1.2.0, found ${manifest.version}`);
+// Pinning a literal version here meant every release bumped a passing suite into
+// a failing one. Check the shape instead, and that version_name still agrees.
+if (!/^\d+\.\d+\.\d+$/.test(manifest.version ?? "")) throw new Error(`Malformed version: ${manifest.version}`);
+if (manifest.version_name && !manifest.version_name.startsWith(manifest.version)) {
+  throw new Error(`version_name "${manifest.version_name}" does not match version ${manifest.version}`);
+}
 
 const requiredRulesets = ["privacy_core", "security_core", "lan_shield", "ad_stealth", "youtube_stealth"];
 for (const id of requiredRulesets) {
