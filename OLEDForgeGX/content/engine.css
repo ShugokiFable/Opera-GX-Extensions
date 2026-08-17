@@ -1,0 +1,91 @@
+:root[data-oledforge-active="true"] {
+  color-scheme: dark;
+  --oledforge-selection: rgba(127, 92, 255, 0.42);
+}
+
+:root[data-oledforge-active="true"] .oledforge-bg {
+  background-color: var(--oledforge-bg) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-neutral-gradient {
+  background-image: none !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-before-bg::before {
+  background-color: var(--oledforge-before-bg) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-after-bg::after {
+  background-color: var(--oledforge-after-bg) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-before-gradient::before,
+:root[data-oledforge-active="true"] .oledforge-after-gradient::after {
+  background-image: none !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-fg {
+  color: var(--oledforge-fg) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-prose {
+  text-decoration-color: currentColor !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-border {
+  border-color: var(--oledforge-border) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-media-balanced {
+  filter: contrast(1.025) brightness(0.99) saturate(1.01) !important;
+}
+
+:root[data-oledforge-active="true"] .oledforge-media-deep {
+  filter: contrast(1.07) brightness(0.965) saturate(1.02) !important;
+}
+
+:root[data-oledforge-active="true"][data-oledforge-sharp-text="true"] .oledforge-fg {
+  text-shadow: none !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+:root[data-oledforge-active="true"] ::selection {
+  background: var(--oledforge-selection) !important;
+  color: #fff !important;
+}
+
+:root[data-oledforge-active="true"] input::placeholder,
+:root[data-oledforge-active="true"] textarea::placeholder {
+  opacity: 0.68 !important;
+}
+
+:root[data-oledforge-active="true"][data-oledforge-idle="true"] .oledforge-static-ui {
+  opacity: var(--oledforge-static-opacity, 0.78) !important;
+  transition: opacity 420ms ease !important;
+}
+
+#oledforge-idle-shade {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483646 !important;
+  background: rgba(0, 0, 0, var(--oledforge-idle-shade, 0)) !important;
+  pointer-events: none !important;
+  transition: background 420ms ease !important;
+}
+
+@media print {
+  :root[data-oledforge-active="true"] .oledforge-bg,
+  :root[data-oledforge-active="true"] .oledforge-fg,
+  :root[data-oledforge-active="true"] .oledforge-border {
+    background-color: revert !important;
+    color: revert !important;
+    border-color: revert !important;
+  }
+
+  :root[data-oledforge-active="true"] .oledforge-neutral-gradient,
+  :root[data-oledforge-active="true"] .oledforge-before-gradient::before,
+  :root[data-oledforge-active="true"] .oledforge-after-gradient::after {
+    background-image: revert !important;
+  }
+}

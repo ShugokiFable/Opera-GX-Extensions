@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GX Overdrive Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo"><span></span></div>
+    <div>
+      <p>OPERA GX LOCAL PERFORMANCE GOVERNOR</p>
+      <h1>GX Overdrive</h1>
+    </div>
+    <div class="live"><i></i><span>LOCAL ENGINE</span></div>
+  </header>
+
+  <main class="layout">
+    <section class="overview panel">
+      <div>
+        <span>Memory free</span>
+        <strong id="memoryPercent">--%</strong>
+        <small id="memoryBytes">Reading physical memory…</small>
+      </div>
+      <div>
+        <span>Tabs</span>
+        <strong id="tabCount">--</strong>
+        <small id="tabDetail">—</small>
+      </div>
+      <div>
+        <span>Recovered downloads</span>
+        <strong id="recoveryCount">0</strong>
+        <small id="downloadDetail">—</small>
+      </div>
+      <button id="refresh">Refresh telemetry</button>
+    </section>
+
+    <section class="panel controls">
+      <div class="section-head">
+        <div><p>CORE 01</p><h2>Memory governor</h2></div>
+        <label class="big-switch"><input data-setting="memoryGovernor" type="checkbox"><span></span></label>
+      </div>
+      <div class="grid two">
+        <label class="field"><span>Emergency trigger</span><output data-output="memoryPressurePercent"></output><input data-setting="memoryPressurePercent" type="range" min="3" max="40" step="1"></label>
+        <label class="field"><span>Cold-tab timer</span><output data-output="inactiveMinutes"></output><input data-setting="inactiveMinutes" type="range" min="5" max="240" step="5"></label>
+        <label class="field"><span>Emergency idle floor</span><output data-output="pressureMinIdleMinutes"></output><input data-setting="pressureMinIdleMinutes" type="range" min="0" max="60" step="1"></label>
+        <label class="field"><span>Emergency cooldown</span><output data-output="pressureCooldownMinutes"></output><input data-setting="pressureCooldownMinutes" type="range" min="1" max="60" step="1"></label>
+      </div>
+      <p class="note">Idle hibernation and emergency hibernation are separate engines. The master switch above only gates the emergency one — untick “Auto-hibernate stale tabs” as well to stop tab unloading completely.</p>
+      <div class="check-grid">
+        <label><input data-setting="autoHibernate" type="checkbox"> Auto-hibernate stale tabs</label>
+        <label><input data-setting="protectPinned" type="checkbox"> Protect pinned tabs</label>
+        <label><input data-setting="protectAudible" type="checkbox"> Protect audible tabs</label>
+        <label><input data-setting="protectDirtyForms" type="checkbox"> Protect unsaved forms</label>
+      </div>
+      <div class="actions"><button id="hibernate">Hibernate eligible tabs now</button></div>
+      <div class="section-head"><div><p>AUDIT</p><h2>Recently hibernated</h2></div><button id="clearLog" class="ghost">Clear</button></div>
+      <div id="hibernationLog" class="downloads"><p>Nothing hibernated yet.</p></div>
+    </section>
+
+    <section class="panel controls">
+      <div class="section-head">
+        <div><p>CORE 02</p><h2>Long-chat engine</h2></div>
+        <label class="big-switch"><input data-setting="chatOptimizer" type="checkbox"><span></span></label>
+      </div>
+      <div class="grid two">
+        <label class="field"><span>Visible conversation turns</span><output data-output="chatMaxVisibleTurns"></output><input data-setting="chatMaxVisibleTurns" type="range" min="10" max="300" step="5"></label>
+        <label class="field"><span>Reveal batch</span><output data-output="chatRevealBatch"></output><input data-setting="chatRevealBatch" type="range" min="5" max="100" step="5"></label>
+      </div>
+      <div class="check-grid">
+        <label><input data-setting="chatReduceEffects" type="checkbox"> Strip heavy shadows from chat turns</label>
+      </div>
+      <p class="note">The engine keeps message nodes intact, uses CSS rendering containment, and folds only old turns. It does not alter or transmit chat content.</p>
+    </section>
+
+    <section class="panel controls">
+      <div class="section-head">
+        <div><p>CORE 03</p><h2>Page turbo</h2></div>
+        <label class="big-switch"><input data-setting="universalTurbo" type="checkbox"><span></span></label>
+      </div>
+      <div class="check-grid">
+        <label><input data-setting="lazyImages" type="checkbox"> Lazy-decode non-priority images</label>
+        <label><input data-setting="pauseOffscreenMutedVideo" type="checkbox"> Pause offscreen muted/autoplay video</label>
+        <label><input data-setting="reduceAnimations" type="checkbox"> Suppress CSS animations</label>
+        <label><input data-setting="reduceBlur" type="checkbox"> Suppress backdrop blur</label>
+        <label><input data-setting="aggressiveContainment" type="checkbox"> Aggressive offscreen section containment</label>
+      </div>
+      <p class="warning">Animation, blur, and aggressive containment modes can change site visuals. Leave them off unless a page is genuinely heavy.</p>
+    </section>
+
+    <section class="panel controls">
+      <div class="section-head">
+        <div><p>CORE 04</p><h2>Download recovery</h2></div>
+        <label class="big-switch"><input data-setting="downloadRecovery" type="checkbox"><span></span></label>
+      </div>
+      <div class="grid two">
+        <label class="field"><span>Stall detection</span><output data-output="stallSeconds"></output><input data-setting="stallSeconds" type="range" min="60" max="600" step="30"></label>
+      </div>
+      <div class="check-grid">
+        <label><input data-setting="autoResumeInterrupted" type="checkbox"> Resume interrupted downloads</label>
+        <label><input data-setting="keepAwakeDuringDownloads" type="checkbox"> Keep system awake during active downloads</label>
+      </div>
+      <div id="downloads" class="downloads"><p>No active downloads.</p></div>
+      <p class="note">Recovery uses the browser’s native pause/resume path. It cannot create extra server connections, bypass CDN limits, or make a source send data faster.</p>
+    </section>
+
+    <section class="panel controls full">
+      <div class="section-head"><div><p>GUARD RAILS</p><h2>Never hibernate these domains</h2></div></div>
+      <div class="whitelist-editor">
+        <textarea id="whitelist" rows="5" spellcheck="false" placeholder="example.com&#10;work.portal.local"></textarea>
+        <button id="saveWhitelist">Save whitelist</button>
+      </div>
+    </section>
+
+    <section class="panel truth full">
+      <h2>Hardware reality check</h2>
+      <p>Browser extensions cannot program Ryzen X3D cache, DRAM timings, SSD DRAM, ReBAR, CUDA cores, or Opera GX’s process scheduler. GX Overdrive targets the layer an extension can legally and reliably control: tab lifecycle, page rendering work, media behavior, browser cache repair, and native download recovery.</p>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

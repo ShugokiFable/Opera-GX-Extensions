@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PrismShot GX Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="backdrop"></div>
+  <main>
+    <header>
+      <div class="brand">
+        <div class="brand-mark"><span></span></div>
+        <div>
+          <h1>PrismShot <i>GX</i></h1>
+          <p>Video frame capture engine</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="saveState">Settings loaded</span>
+        <button class="ghost" id="resetButton">Reset defaults</button>
+        <button class="primary" id="saveButton">Save settings</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="eyebrow">HYBRID CAPTURE PIPELINE</span>
+        <h2>Clean source frames when possible.<br>Pixel-accurate visible capture when necessary.</h2>
+        <p>PrismShot prefers decoded source frames for maximum quality, then falls back to a cropped tab screenshot for cross-origin players, captions, CSS filters, and player overlays.</p>
+      </div>
+      <div class="engine-diagram" aria-label="Capture pipeline diagram">
+        <div><b>01</b><span>DETECT</span><small>All frames</small></div>
+        <i></i>
+        <div><b>02</b><span>EXTRACT</span><small>Source frame</small></div>
+        <i></i>
+        <div><b>03</b><span>FALLBACK</span><small>Visible crop</small></div>
+        <i></i>
+        <div><b>04</b><span>ENCODE</span><small>PNG / WebP / JPG</small></div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <nav>
+        <a href="#capture">Capture</a>
+        <a href="#output">Output</a>
+        <a href="#interface">Interface</a>
+        <a href="#library">Library</a>
+        <a href="#limits">Compatibility</a>
+      </nav>
+
+      <div class="settings-column">
+        <section class="card" id="capture">
+          <div class="card-heading">
+            <div><span>01</span><h3>Capture engine</h3></div>
+            <p>Choose how PrismShot acquires pixels and controls playback.</p>
+          </div>
+
+          <div class="option-grid three">
+            <label class="choice-card">
+              <input type="radio" name="captureMode" value="auto">
+              <span class="choice-dot"></span>
+              <b>Auto hybrid</b>
+              <small>Try a clean source frame, then use visible capture if blocked.</small>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="captureMode" value="native">
+              <span class="choice-dot"></span>
+              <b>Clean source</b>
+              <small>Native decoded video pixels. No captions, controls, or CSS filters.</small>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="captureMode" value="visible">
+              <span class="choice-dot"></span>
+              <b>What you see</b>
+              <small>Captures the rendered player, including captions and visual filters.</small>
+            </label>
+          </div>
+
+          <div class="rows">
+            <label class="switch-row">
+              <div><b>Pause during capture</b><small>Freezes the selected video before acquiring the frame.</small></div>
+              <input type="checkbox" id="pauseDuringCapture"><span class="switch"></span>
+            </label>
+            <label class="switch-row">
+              <div><b>Resume after capture</b><small>Restores playback when PrismShot paused it.</small></div>
+              <input type="checkbox" id="resumeAfterCapture"><span class="switch"></span>
+            </label>
+            <label class="field-row">
+              <div><b>Visible-capture settle delay</b><small>Allows controls and the PrismShot overlay to disappear before the tab screenshot.</small></div>
+              <div class="number-field"><input type="number" id="visibleCaptureDelay" min="0" max="1000" step="10"><span>ms</span></div>
+            </label>
+            <label class="field-row">
+              <div><b>Burst interval</b><small>Visible capture is limited by Chromium to two tab captures per second.</small></div>
+              <div class="number-field"><input type="number" id="burstInterval" min="550" max="5000" step="50"><span>ms</span></div>
+            </label>
+          </div>
+        </section>
+
+        <section class="card" id="output">
+          <div class="card-heading">
+            <div><span>02</span><h3>Output and quality</h3></div>
+            <p>Control encoding, scaling, enhancement, destinations, and file organization.</p>
+          </div>
+
+          <div class="form-grid">
+            <label><span>DEFAULT FORMAT</span><select id="format"><option value="png">PNG lossless</option><option value="webp">WebP</option><option value="jpeg">JPEG</option></select></label>
+            <label><span>DEFAULT DESTINATION</span><select id="destination"><option value="download">Download</option><option value="clipboard">Clipboard</option><option value="both">Download + clipboard</option></select></label>
+            <label><span>OUTPUT SCALE</span><select id="upscale"><option value="1x">Native / rendered</option><option value="2x">2× upscale</option><option value="4k">Fit up to 4K</option><option value="8k">Fit up to 8K</option></select></label>
+            <label><span>DEFAULT BURST</span><select id="burstCount"><option value="1">Single frame</option><option value="3">3 frames</option><option value="5">5 frames</option><option value="10">10 frames</option></select></label>
+            <label class="wide"><span>LOSSY ENCODE QUALITY <b id="qualityValue">94%</b></span><input id="quality" type="range" min="50" max="100" step="1"></label>
+          </div>
+
+          <div class="rows compact">
+            <label class="switch-row">
+              <div><b>Clarity boost</b><small>Applies a restrained contrast and saturation lift during resizing.</small></div>
+              <input type="checkbox" id="microContrast"><span class="switch"></span>
+            </label>
+            <label class="switch-row">
+              <div><b>Trim black letterbox bars</b><small>Detects near-black uniform edges. Disabled by default to avoid trimming dark scenes.</small></div>
+              <input type="checkbox" id="trimLetterbox"><span class="switch"></span>
+            </label>
+            <label class="switch-row">
+              <div><b>Timestamp watermark</b><small>Adds the site, media time, and capture date in the lower-right corner.</small></div>
+              <input type="checkbox" id="includeTimestampWatermark"><span class="switch"></span>
+            </label>
+            <label class="switch-row">
+              <div><b>Ask where to save</b><small>Shows the browser Save As dialog for each downloaded frame.</small></div>
+              <input type="checkbox" id="saveAs"><span class="switch"></span>
+            </label>
+          </div>
+
+          <div class="template-grid">
+            <label><span>DOWNLOAD FOLDER</span><input type="text" id="downloadFolder" spellcheck="false"></label>
+            <label><span>FILENAME TEMPLATE</span><input type="text" id="filenameTemplate" spellcheck="false"></label>
+          </div>
+          <div class="tokens">Tokens: <code>{title}</code> <code>{site}</code> <code>{date}</code> <code>{timestamp}</code> <code>{time}</code> <code>{width}</code> <code>{height}</code> <code>{resolution}</code> <code>{engine}</code> <code>{index}</code></div>
+          <div class="preview"><span>PREVIEW</span><code id="filenamePreview"></code></div>
+        </section>
+
+        <section class="card" id="interface">
+          <div class="card-heading">
+            <div><span>03</span><h3>Interface</h3></div>
+            <p>Configure the on-video toolbar and completion feedback.</p>
+          </div>
+          <div class="rows compact">
+            <label class="switch-row">
+              <div><b>On-video controls</b><small>Shows capture, copy, and approximate frame-step controls over the active video.</small></div>
+              <input type="checkbox" id="overlayEnabled"><span class="switch"></span>
+            </label>
+            <label class="switch-row">
+              <div><b>Completion toasts</b><small>Displays a compact confirmation over the selected video.</small></div>
+              <input type="checkbox" id="showToasts"><span class="switch"></span>
+            </label>
+          </div>
+          <div class="shortcut-grid">
+            <div><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>S</kbd><span>Save frame</span></div>
+            <div><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>X</kbd><span>Copy frame</span></div>
+            <div><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>V</kbd><span>Toggle overlay</span></div>
+          </div>
+          <p class="hint">Shortcuts can be reassigned from <code>opera://extensions/shortcuts</code>.</p>
+        </section>
+
+        <section class="card" id="library">
+          <div class="card-heading">
+            <div><span>04</span><h3>Recent capture library</h3></div>
+            <p>PrismShot stores compact thumbnails and metadata locally. Full images remain in Downloads or the clipboard.</p>
+          </div>
+          <label class="field-row">
+            <div><b>History limit</b><small>Set to zero to disable the recent-capture strip.</small></div>
+            <div class="number-field"><input type="number" id="historyLimit" min="0" max="50" step="1"><span>items</span></div>
+          </label>
+          <button class="danger" id="clearHistory">Clear capture history</button>
+        </section>
+
+        <section class="card warning-card" id="limits">
+          <div class="card-heading">
+            <div><span>!</span><h3>Browser and DRM boundaries</h3></div>
+          </div>
+          <p>Protected video paths can intentionally render black in browser screenshots, and encrypted media may reject canvas extraction. PrismShot does not bypass DRM, HDCP, protected surfaces, site access controls, or browser security boundaries.</p>
+          <p>Frame stepping uses the best frame-rate estimate exposed by the player. HTML video seeking is keyframe-dependent, so some streams can land near a frame rather than on an exact codec frame.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

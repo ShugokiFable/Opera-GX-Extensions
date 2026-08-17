@@ -1,0 +1,36 @@
+[
+  {
+    "id": 4001,
+    "priority": 100,
+    "action": { "type": "block" },
+    "condition": {
+      "requestDomains": [
+        "googleads.g.doubleclick.net", "pubads.g.doubleclick.net", "securepubads.g.doubleclick.net",
+        "static.doubleclick.net", "pagead2.googlesyndication.com", "tpc.googlesyndication.com",
+        "googleadservices.com", "imasdk.googleapis.com"
+      ],
+      "initiatorDomains": ["youtube.com", "youtube-nocookie.com"],
+      "resourceTypes": ["sub_frame", "script", "image", "xmlhttprequest", "ping", "media", "other"]
+    }
+  },
+  {
+    "id": 4002,
+    "priority": 90,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://(?:www\\.)?youtube\\.com/(?:api/stats/ads|pagead/|ptracking)(?:[/?]|$)",
+      "initiatorDomains": ["youtube.com"],
+      "resourceTypes": ["image", "xmlhttprequest", "ping", "other"]
+    }
+  },
+  {
+    "id": 4003,
+    "priority": 85,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||youtube.com/get_midroll_info",
+      "initiatorDomains": ["youtube.com"],
+      "resourceTypes": ["xmlhttprequest", "other"]
+    }
+  }
+]

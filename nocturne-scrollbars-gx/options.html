@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nocturne Studio</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span></span></div>
+        <div><h1>Nocturne</h1><p>SCROLLBARS GX</p></div>
+      </div>
+      <nav>
+        <a href="#presets" class="active">Preset Matrix</a>
+        <a href="#geometry">Geometry</a>
+        <a href="#chromatics">Chromatics</a>
+        <a href="#behavior">Behavior</a>
+        <a href="#sites">Site Profiles</a>
+        <a href="#data">Data & Privacy</a>
+      </nav>
+      <div class="privacy-chip"><span></span> Zero telemetry</div>
+      <div class="version">v1.0.0 • MV3</div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">CONTROL SURFACE</span>
+          <h2>Nocturne Studio</h2>
+          <p>Precision scrollbar theming for Opera GX and Chromium.</p>
+        </div>
+        <div class="power-card">
+          <div><b>Global engine</b><small id="engineStatus">Online</small></div>
+          <label class="switch big"><input id="enabled" type="checkbox"><span></span></label>
+        </div>
+      </header>
+
+      <div class="content-grid">
+        <div class="settings-column">
+          <section id="presets" class="card">
+            <div class="card-head"><div><span>01</span><h3>Preset Matrix</h3></div><p>Start with a tuned visual system, then mutate it.</p></div>
+            <div id="presetCards" class="preset-cards"></div>
+          </section>
+
+          <section id="geometry" class="card">
+            <div class="card-head"><div><span>02</span><h3>Geometry</h3></div><p>Control footprint, shape, and hit-target size.</p></div>
+            <div class="control-grid">
+              <label class="range-control"><span>Vertical width <output id="widthOut"></output></span><input id="width" type="range" min="6" max="24" step="1"></label>
+              <label class="range-control"><span>Horizontal height <output id="heightOut"></output></span><input id="height" type="range" min="6" max="24" step="1"></label>
+              <label class="range-control"><span>Corner radius <output id="radiusOut"></output></span><input id="radius" type="range" min="0" max="20" step="1"></label>
+              <label class="range-control"><span>Minimum thumb <output id="minThumbOut"></output></span><input id="minThumb" type="range" min="16" max="100" step="1"></label>
+              <label class="range-control"><span>Border width <output id="borderWidthOut"></output></span><input id="borderWidth" type="range" min="0" max="5" step="1"></label>
+            </div>
+          </section>
+
+          <section id="chromatics" class="card">
+            <div class="card-head"><div><span>03</span><h3>Chromatics</h3></div><p>Six-channel palette with adaptive contrast protection.</p></div>
+            <div class="color-grid">
+              <label><span>Track</span><input id="track" type="color"><code id="trackCode"></code></label>
+              <label><span>Thumb A</span><input id="thumb" type="color"><code id="thumbCode"></code></label>
+              <label><span>Thumb B</span><input id="thumb2" type="color"><code id="thumb2Code"></code></label>
+              <label><span>Hover</span><input id="hover" type="color"><code id="hoverCode"></code></label>
+              <label><span>Active</span><input id="active" type="color"><code id="activeCode"></code></label>
+              <label><span>Border</span><input id="border" type="color"><code id="borderCode"></code></label>
+            </div>
+            <div class="control-grid compact">
+              <label class="range-control"><span>Track opacity <output id="trackAlphaOut"></output></span><input id="trackAlpha" type="range" min="0" max="1" step="0.01"></label>
+              <label class="range-control"><span>Glow radius <output id="glowOut"></output></span><input id="glow" type="range" min="0" max="30" step="1"></label>
+              <label class="range-control"><span>Glow intensity <output id="glowAlphaOut"></output></span><input id="glowAlpha" type="range" min="0" max="1" step="0.01"></label>
+              <label class="range-control"><span>Ambient blend <output id="ambientBlendOut"></output></span><input id="ambientBlend" type="range" min="0" max="0.35" step="0.01"></label>
+              <label class="range-control"><span>Minimum contrast <output id="minContrastOut"></output></span><input id="minContrast" type="range" min="1" max="7" step="0.1"></label>
+            </div>
+            <div class="toggle-grid">
+              <label><div><b>Gradient thumb</b><small>Blend Thumb A into Thumb B.</small></div><span class="switch"><input id="gradient" type="checkbox"><span></span></span></label>
+              <label><div><b>Adaptive track</b><small>Blend lightly with the page background.</small></div><span class="switch"><input id="adaptiveTrack" type="checkbox"><span></span></span></label>
+              <label><div><b>Contrast guard</b><small>Correct low-contrast combinations automatically.</small></div><span class="switch"><input id="contrastGuard" type="checkbox"><span></span></span></label>
+            </div>
+          </section>
+
+          <section id="behavior" class="card">
+            <div class="card-head"><div><span>04</span><h3>Behavior</h3></div><p>Animation, visibility, accessibility, and deep-page coverage.</p></div>
+            <div class="select-grid">
+              <label><span>Visibility mode</span><select id="visibility"><option value="always">Always visible</option><option value="minimal">Minimal idle state</option><option value="hover">Reveal on hover</option></select></label>
+              <label><span>Motion duration</span><select id="motionMs"><option value="80">80 ms • Immediate</option><option value="150">150 ms • Balanced</option><option value="240">240 ms • Smooth</option><option value="400">400 ms • Cinematic</option></select></label>
+            </div>
+            <div class="toggle-grid">
+              <label><div><b>Motion effects</b><small>Animate hover and active transitions.</small></div><span class="switch"><input id="motion" type="checkbox"><span></span></span></label>
+              <label><div><b>Respect reduced motion</b><small>Disable effects when the OS requests it.</small></div><span class="switch"><input id="respectReducedMotion" type="checkbox"><span></span></span></label>
+              <label><div><b>Touch target boost</b><small>Increase scrollbar size for coarse pointers.</small></div><span class="switch"><input id="touchBoost" type="checkbox"><span></span></span></label>
+              <label><div><b>Open Shadow DOM coverage</b><small>Styles web-component scrollbars. Optional due to extra DOM work.</small></div><span class="switch"><input id="deepShadowDom" type="checkbox"><span></span></span></label>
+            </div>
+          </section>
+
+          <section id="sites" class="card">
+            <div class="card-head"><div><span>05</span><h3>Site Profiles</h3></div><p>Exact domains or wildcard patterns such as *.example.com.</p></div>
+            <form id="addSiteForm" class="site-form"><input id="sitePattern" placeholder="example.com or *.example.com" autocomplete="off"><button type="submit">Add profile</button></form>
+            <div id="siteRules" class="site-rules"></div>
+          </section>
+
+          <section id="data" class="card">
+            <div class="card-head"><div><span>06</span><h3>Data & Privacy</h3></div><p>Your configuration remains inside browser extension storage.</p></div>
+            <div class="data-actions">
+              <button id="exportConfig">Export JSON</button>
+              <label class="file-button">Import JSON<input id="importConfig" type="file" accept="application/json,.json"></label>
+              <button id="resetAll" class="danger">Restore defaults</button>
+            </div>
+            <div class="data-actions">
+              <button id="pushSync">Send profile to sync</button>
+              <button id="pullSync">Load profile from sync</button>
+            </div>
+            <p class="hint">Settings are saved locally and applied instantly. Browser sync storage throttles writes hard enough to drop edits mid-drag, so copying your look to another machine is a deliberate button rather than something that happens on every slider move.</p>
+            <div class="diagnostics"><span>Sync storage <b id="syncBytes">—</b></span><span>Local storage <b id="localBytes">—</b></span><span>Profiles <b id="ruleCount">0</b></span></div>
+          </section>
+        </div>
+
+        <aside class="preview-column">
+          <div class="preview-card">
+            <div class="preview-head"><span>LIVE RENDER</span><i id="saveState">Saved</i></div>
+            <div id="previewShell" class="preview-shell">
+              <div id="previewScroll" class="preview-scroll">
+                <article>
+                  <span class="mini-tag">NOCTURNE ENGINE</span>
+                  <h4>Dark matter,<br>properly machined.</h4>
+                  <p>The preview uses the same color and geometry model as the page injector. Scroll it, hover the thumb, and test the active state.</p>
+                  <div class="metric-row"><div><b>0</b><span>TRACKERS</span></div><div><b>1</b><span>STYLE NODE</span></div><div><b>∞</b><span>FRAMES</span></div></div>
+                  <div class="fake-code">::-webkit-scrollbar-thumb {<br>&nbsp;&nbsp;background: precision;<br>&nbsp;&nbsp;latency: negligible;<br>}</div>
+                  <p>Page scrollbars are styled with one generated CSS sheet. There is no network access, analytics endpoint, remote script, polling loop, or perpetual page scan.</p>
+                  <div class="blocks"><span></span><span></span><span></span><span></span></div>
+                </article>
+              </div>
+            </div>
+            <div class="preview-footer"><span id="activePreset">GX Reactor</span><button id="randomize">Signal shuffle</button></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="common.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

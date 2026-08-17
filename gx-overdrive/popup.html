@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GX Overdrive</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="brand-mark"><span></span></div>
+      <div>
+        <p class="eyebrow">OPERA GX PERFORMANCE CORE</p>
+        <h1>GX Overdrive</h1>
+      </div>
+      <label class="switch master" title="Master switch">
+        <input id="enabled" type="checkbox">
+        <span></span>
+      </label>
+    </header>
+
+    <section class="memory-card">
+      <div class="memory-ring" id="memoryRing">
+        <div><strong id="memoryPercent">--</strong><span>% FREE</span></div>
+      </div>
+      <div class="memory-copy">
+        <span>Physical memory</span>
+        <strong id="memoryText">Reading system state…</strong>
+        <small id="tabText">—</small>
+      </div>
+    </section>
+
+    <section class="toggles">
+      <label class="toggle-row">
+        <span><strong>Long-chat engine</strong><small>Virtualize and fold old GPT turns</small></span>
+        <input data-setting="chatOptimizer" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>Idle tab hibernation</strong><small>Unload tabs left untouched for the cold-tab timer</small></span>
+        <input data-setting="autoHibernate" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>RAM-pressure hibernation</strong><small>Unload cold tabs only when free memory runs out</small></span>
+        <input data-setting="memoryGovernor" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>Never hibernate this site</strong><small id="siteHost">—</small></span>
+        <input id="siteProtect" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>Page turbo</strong><small>Lazy media and rendering containment</small></span>
+        <input data-setting="universalTurbo" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>Download recovery</strong><small>Resume interrupted or stalled transfers</small></span>
+        <input data-setting="downloadRecovery" type="checkbox">
+      </label>
+    </section>
+
+    <section class="quick-grid">
+      <button id="boost"><b>Boost tab</b><span>Apply now</span></button>
+      <button id="hibernate"><b>Hibernate</b><span>Other tabs</span></button>
+      <button id="repair"><b>Repair cache</b><span>Current site</span></button>
+      <button id="dashboard"><b>Dashboard</b><span>Full controls</span></button>
+    </section>
+
+    <section class="stats">
+      <div><span id="discarded">0</span><small>tabs hibernated</small></div>
+      <div><span id="recovered">0</span><small>downloads recovered</small></div>
+      <div><span id="activeDownloads">0</span><small>active downloads</small></div>
+    </section>
+
+    <p id="status" class="status" aria-live="polite">Local-only. No telemetry.</p>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

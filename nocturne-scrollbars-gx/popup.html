@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nocturne Scrollbars GX</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="mark" aria-hidden="true"><span></span></div>
+      <div class="hero-copy">
+        <h1>Nocturne <b>GX</b></h1>
+        <p id="domainLabel">Reading current tab…</p>
+      </div>
+      <label class="switch master" title="Global power">
+        <input id="globalEnabled" type="checkbox">
+        <span></span>
+      </label>
+    </header>
+
+    <section id="restrictedNotice" class="notice hidden">
+      Browser-internal pages cannot be restyled by extensions. Open a normal website to use Nocturne.
+    </section>
+
+    <section class="site-row">
+      <div>
+        <strong>This site</strong>
+        <small id="siteStateText">Uses global settings</small>
+      </div>
+      <label class="switch">
+        <input id="siteEnabled" type="checkbox">
+        <span></span>
+      </label>
+    </section>
+
+    <nav class="scope-tabs" aria-label="Editing scope">
+      <button class="active" data-scope="global">Global</button>
+      <button data-scope="site">This site</button>
+    </nav>
+
+    <section class="panel">
+      <div class="section-title">
+        <span>Preset matrix</span>
+        <small id="scopeLabel">GLOBAL</small>
+      </div>
+      <div id="presetGrid" class="preset-grid"></div>
+    </section>
+
+    <section class="panel controls">
+      <label>
+        <span>Width <output id="widthOut">12 px</output></span>
+        <input id="width" type="range" min="6" max="24" step="1">
+      </label>
+      <label>
+        <span>Glow <output id="glowOut">14 px</output></span>
+        <input id="glow" type="range" min="0" max="30" step="1">
+      </label>
+      <label class="select-row">
+        <span>Visibility</span>
+        <select id="visibility">
+          <option value="always">Always visible</option>
+          <option value="minimal">Minimal</option>
+          <option value="hover">Reveal on hover</option>
+        </select>
+      </label>
+    </section>
+
+    <footer>
+      <button id="resetSite" class="ghost">Clear site profile</button>
+      <button id="openStudio" class="primary">Open Studio</button>
+    </footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script src="common.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

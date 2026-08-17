@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NebulaGrab Dashboard</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand sidebar-brand">
+        <div class="brand-mark">N</div>
+        <div class="brand-copy">
+          <h1 class="brand-title">NebulaGrab</h1>
+          <p class="brand-subtitle">Media capture console</p>
+        </div>
+      </div>
+
+      <nav id="sideFilters" class="side-nav">
+        <button class="side-link active" data-kind="all"><span>All media</span><b id="countAll">0</b></button>
+        <button class="side-link" data-kind="video"><span>Direct video</span><b id="countVideo">0</b></button>
+        <button class="side-link" data-kind="stream"><span>Streams</span><b id="countStream">0</b></button>
+        <button class="side-link" data-kind="image"><span>Images</span><b id="countImage">0</b></button>
+        <button class="side-link" data-kind="audio"><span>Audio</span><b id="countAudio">0</b></button>
+        <button class="side-link" data-kind="blob"><span>Blob URLs</span><b id="countBlob">0</b></button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button id="settingsBtn" class="btn">Settings</button>
+        <div class="privacy-note">Local-first. No telemetry. Encrypted and DRM media is rejected.</div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-head">
+        <div class="page-copy">
+          <div class="eyebrow">ACTIVE CAPTURE</div>
+          <h2 id="activeTitle">Loading tab…</h2>
+          <p id="activeUrl"></p>
+        </div>
+        <div class="head-actions">
+          <button id="clearBtn" class="btn btn-danger">Clear</button>
+          <button id="scanBtn" class="btn">Rescan</button>
+          <button id="smartFetchBtn" class="btn">Smart fetch page</button>
+          <button id="downloadSelectedBtn" class="btn btn-primary">Download selected</button>
+        </div>
+      </header>
+
+      <section class="metrics">
+        <article><span>Total detected</span><strong id="metricTotal">0</strong></article>
+        <article><span>Selectable</span><strong id="metricSelected">0</strong></article>
+        <article><span>Estimated size</span><strong id="metricSize">0 B</strong></article>
+        <article><span>Companion</span><strong id="metricHelper" class="helper-offline">Offline</strong></article>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-wrap"><span>⌕</span><input id="searchInput" class="input" type="search" placeholder="Filter by filename, host, type, resolution…"></label>
+        <select id="sortSelect" class="select">
+          <option value="quality">Best quality</option>
+          <option value="newest">Newest</option>
+          <option value="size">Largest size</option>
+          <option value="name">Filename</option>
+        </select>
+        <label class="check-label"><input id="selectVisible" type="checkbox"> Select visible</label>
+        <button id="refreshBtn" class="btn btn-icon" title="Refresh">↻</button>
+      </section>
+
+      <section class="table-shell">
+        <div class="table-head">
+          <div></div><div>Media</div><div>Type</div><div>Quality</div><div>Size</div><div>Source</div><div></div>
+        </div>
+        <div id="mediaTable" class="media-table"></div>
+      </section>
+      <div id="status" class="status"></div>
+    </main>
+  </div>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="dialog-card">
+      <header><div><h3>NebulaGrab settings</h3><p>Tune capture, downloads, and the local stream companion.</p></div><button class="btn btn-icon" value="cancel">×</button></header>
+      <div class="settings-grid">
+        <label><span>Download folder</span><input id="downloadFolder" class="input" type="text" placeholder="NebulaGrab"></label>
+        <label><span>Maximum items per tab</span><input id="maxItemsPerTab" class="input" type="number" min="100" max="5000"></label>
+        <label><span>Companion URL</span><input id="helperUrl" class="input" type="url"></label>
+        <label><span>Companion token</span><input id="helperToken" class="input" type="password" autocomplete="off"></label>
+        <label><span>Stream container</span><select id="helperContainer" class="select"><option value="mkv">MKV</option><option value="mp4">MP4</option><option value="webm">WebM</option></select></label>
+        <label><span>Smart Fetch cookie browser</span><select id="smartFetchBrowser" class="select"><option value="opera">Opera / Opera GX</option><option value="chrome">Chrome</option><option value="edge">Edge</option><option value="firefox">Firefox</option><option value="brave">Brave</option><option value="vivaldi">Vivaldi</option></select></label>
+        <label class="toggle-row"><input id="reliableDownloads" type="checkbox"><span>Route direct files through resumable disk cache</span></label>
+        <label class="toggle-row"><input id="fallbackToBrowser" type="checkbox"><span>Fall back to non-resumable browser downloads if companion is offline</span></label>
+        <label class="toggle-row"><input id="smartFetchCookies" type="checkbox"><span>Use your selected browser profile cookies for logged-in Smart Fetch pages</span></label>
+        <label class="toggle-row"><input id="autoScan" type="checkbox"><span>Automatically scan page DOM</span></label>
+        <label class="toggle-row"><input id="captureNetwork" type="checkbox"><span>Capture matching network requests</span></label>
+        <label class="toggle-row"><input id="clearOnNavigation" type="checkbox"><span>Clear results when navigating</span></label>
+        <label class="toggle-row"><input id="notifications" type="checkbox"><span>Show companion job notifications</span></label>
+      </div>
+      <div class="dialog-actions">
+        <button id="testHelperBtn" class="btn" type="button">Test companion</button>
+        <span id="helperTestStatus"></span>
+        <button class="btn" value="cancel">Cancel</button>
+        <button id="saveSettingsBtn" class="btn btn-primary" type="button">Save settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

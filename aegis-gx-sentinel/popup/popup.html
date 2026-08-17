@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aegis GX Sentinel</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <img src="../assets/icons/icon48.png" alt="">
+      <div><h1>Aegis GX</h1><p id="statusText">Loading shield…</p></div>
+      <label class="switch" title="Master browser protection">
+        <input id="masterToggle" type="checkbox">
+        <span></span>
+      </label>
+    </header>
+
+    <section class="relay" id="relayPanel">
+      <div class="relay-head">
+        <div><span>Secure Relay</span><strong id="relayName">Off</strong></div>
+        <span id="relayState" class="badge">OFF</span>
+      </div>
+      <p id="relayDetail">Browser traffic is using the normal system route.</p>
+      <div class="relay-actions">
+        <button id="relayAction" type="button">Configure relay</button>
+        <button id="ipCheck" type="button">Check public IP</button>
+      </div>
+      <p id="publicIp" class="ip-line">Observed IP: not checked</p>
+    </section>
+
+
+    <section class="adshield" id="adshieldPanel">
+      <div class="adshield-head">
+        <div><span>Stealth Ad Shield</span><strong id="adshieldName">Network filtering</strong></div>
+        <label class="switch" title="Independent ad blocker toggle"><input id="adblockToggle" type="checkbox"><span></span></label>
+      </div>
+      <p id="adshieldDetail">Loading ad defenses…</p>
+      <div class="adshield-actions">
+        <button id="siteAdToggle" type="button">Allow ads here</button>
+        <button id="youtubeToggle" type="button" hidden>YouTube Shield</button>
+      </div>
+    </section>
+
+    <section class="risk" id="riskPanel">
+      <div><span>Current site</span><strong id="currentHost">Browser page</strong></div>
+      <div class="risk-score"><span>Risk</span><strong id="riskScore">0</strong></div>
+    </section>
+
+    <section class="metrics">
+      <div><span>Threat domains</span><strong id="domainCount">0</strong></div>
+      <div><span>Filter rules</span><strong id="ruleCount">0</strong></div>
+      <div><span>Stopped</span><strong id="stoppedCount">0</strong></div>
+    </section>
+
+    <label class="field">Protection profile
+      <select id="profileSelect">
+        <option value="balanced">Balanced</option>
+        <option value="hardened">Hardened</option>
+        <option value="lockdown">Lockdown</option>
+      </select>
+    </label>
+
+    <div class="actions">
+      <button id="siteToggle" type="button">Trust this site</button>
+      <button id="updateFeeds" type="button">Update intelligence</button>
+    </div>
+    <p id="message" aria-live="polite"></p>
+    <footer><button id="openOptions" type="button">Open command center</button></footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

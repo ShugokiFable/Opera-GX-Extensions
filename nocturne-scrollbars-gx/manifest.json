@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAi46IE/2Ic8ObJQ04NIHsZlCEXWXuEA4iN+y4NcpUq1r2AsAjlgJ28iaLt9A9RLpb2P+DQNt6iCdKQBt0dGkaczpQsAVTNtxzD7jucJquNnm+ke/+WThvG6DJ8QO6r5Agz7oTaJ3ulJ8fjy4fgvjOD3qRNLIs3xhguZ+2LV/5M2G7DWPd9CsmmVIgW19z7e9gZs5FUxOKIM5LmTh6HB9Gad1y85YL13aVz5jSTGoUbgOLmQ/opZqAQblIrVUJmIVwPlTBKpUskXSbuzZDtyZLdTcQDqoiFCo3544R+Prftw4oxXMg3dphfCnh+d2qhyxMKWG2nNkIqUhcQ2XXu3zWkQIDAQAB",
+  "name": "Nocturne Scrollbars GX",
+  "short_name": "Nocturne GX",
+  "version": "1.1.0",
+  "version_name": "1.1.0 Next-Gen Edition",
+  "description": "Ultra-polished dark modern scrollbars for Opera GX and Chromium browsers. Fast, private, adaptive, and deeply customizable.",
+  "minimum_chrome_version": "119",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "file:///*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Nocturne Scrollbars GX",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file:///*"
+      ],
+      "js": [
+        "common.js",
+        "content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ],
+  "commands": {
+    "toggle-current-site": {
+      "suggested_key": {
+        "default": "Alt+Shift+N"
+      },
+      "description": "Toggle Nocturne on the current site"
+    },
+    "cycle-preset": {
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
+      "description": "Cycle to the next scrollbar preset"
+    }
+  }
+}

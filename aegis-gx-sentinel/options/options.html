@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Aegis GX Command Center</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <header>
+      <img src="../assets/icons/icon128.png" alt="">
+      <div><h1>Aegis GX Sentinel</h1><p>Local-first browser defense, secure relay routing, and leak containment for Opera GX.</p></div>
+      <span id="liveBadge">Loading</span>
+    </header>
+
+    <section class="metrics">
+      <article><span>Threat domains</span><strong id="domains">0</strong></article>
+      <article><span>Ad domains</span><strong id="adDomains">0</strong></article>
+      <article><span>Compiled rules</span><strong id="rules">0</strong></article>
+      <article><span>Threats stopped</span><strong id="stopped">0</strong></article>
+      <article><span>Feed age</span><strong id="feedAge">Never</strong></article>
+      <article><span>Secure relay</span><strong id="relayMetric">Off</strong></article>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><h2>Protection profile</h2><p>Balanced minimizes breakage. Lockdown closes more browser surfaces and permission prompts.</p></div><button id="updateFeeds" type="button">Update intelligence now</button></div>
+      <div class="profiles">
+        <label><input type="radio" name="profile" value="balanced"><strong>Balanced</strong><span>High compatibility, feed blocking, safer warnings.</span></label>
+        <label><input type="radio" name="profile" value="hardened"><strong>Hardened</strong><span>Recommended. Earlier phishing warnings and notification blocking.</span></label>
+        <label><input type="radio" name="profile" value="lockdown"><strong>Lockdown</strong><span>Aggressive permission firewall, referrer suppression, and speculative-load blocking.</span></label>
+      </div>
+    </section>
+
+
+    <section class="panel adshield-panel">
+      <div class="section-head">
+        <div><h2>Stealth Ad Shield</h2><p>Independent from the main security shield. Network-only blocking leaves no page-script hooks; optional cosmetic and YouTube recovery layers can be enabled separately.</p></div>
+        <span id="adshieldBadge" class="status-badge">On</span>
+      </div>
+      <div class="warning-strip"><strong>No blocker is literally undetectable.</strong> Network failures, missing ad slots, and altered player behavior can still be inferred by a site. Network-only mode minimizes extension footprint and never patches page fetch, XHR, or YouTube globals.</div>
+      <div class="grid adshield-grid">
+        <div>
+          <label class="check"><input id="adblockEnabled" type="checkbox"><span><strong>Enable stealth network blocking</strong><small>Blocks known ad endpoints with Chromium DNR. Continues working even when the main security shield is paused.</small></span></label>
+          <label class="check"><input id="hageziAds" type="checkbox"><span><strong>HaGeZi Pro mini ad intelligence</strong><small>Downloads a domain-only ad and tracker list and compiles it locally.</small></span></label>
+          <label class="check"><input id="cosmeticFiltering" type="checkbox"><span><strong>Cosmetic ad cleanup</strong><small>Hides common empty ad slots. More visible to page scripts than network-only filtering.</small></span></label>
+          <label class="check"><input id="sponsoredCleanup" type="checkbox"><span><strong>Sponsored-content cleanup</strong><small>Hides common promoted widgets and sponsored placements after page load.</small></span></label>
+          <label class="check"><input id="annoyanceCleanup" type="checkbox"><span><strong>Anti-adblock overlay cleanup</strong><small>Removes large overlays matching explicit anti-adblock language. Disable first when a site behaves strangely.</small></span></label>
+        </div>
+        <div>
+          <h3>YouTube module</h3>
+          <label class="check"><input id="youtubeEnabled" type="checkbox"><span><strong>Enable YouTube Ad Shield</strong><small>Independent toggle. Off by default to minimize breakage and detection risk.</small></span></label>
+          <label class="field">YouTube mode
+            <select id="youtubeMode"><option value="network">Network-only · lowest footprint</option><option value="adaptive">Adaptive · skip, mute, and clean</option><option value="aggressive">Aggressive · fast-forward ad playback</option></select>
+          </label>
+          <label class="check"><input id="youtubeHidePromotions" type="checkbox"><span><strong>Hide promoted YouTube placements</strong><small>Removes masthead, companion, feed, and banner promotion containers.</small></span></label>
+          <label class="check"><input id="youtubeAutoFallback" type="checkbox"><span><strong>Temporary anti-adblock fallback</strong><small>Adaptive and Aggressive modes can pause ad rules only for the detected YouTube tab and reload it. Threat blocking remains active.</small></span></label>
+          <p class="format-help"><strong id="youtubeDetectionStatus">No YouTube anti-adblock detection recorded.</strong></p>
+        </div>
+      </div>
+      <label class="field">Ad-block allowlist
+        <textarea id="adblockAllowlist" spellcheck="false" placeholder="example.com&#10;news.example"></textarea>
+      </label>
+      <p class="format-help">This list disables only ad rules for matching sites. The separate Trusted domains list disables the broader Aegis rule stack.</p>
+    </section>
+
+    <section class="panel relay-panel">
+      <div class="section-head">
+        <div><h2>Secure Relay Router</h2><p>Routes Opera browser traffic through trusted HTTPS or SOCKS endpoints. Smart mode benchmarks while the computer is idle and selects the lowest-latency healthy route.</p></div>
+        <span id="relayBadge" class="status-badge">Off</span>
+      </div>
+
+      <div class="warning-strip"><strong>Do not paste random “free proxy” lists.</strong> Public proxies can log destinations, inject content, steal credentials on HTTP pages, or disappear without warning. Opera’s built-in free VPN or a reputable VPN application is safer. A browser extension cannot create a Windows WireGuard/OpenVPN tunnel.</div>
+
+      <div class="relay-grid">
+        <div>
+          <label class="check"><input id="relayEnabled" type="checkbox"><span><strong>Enable secure relay</strong><small>Applies only to Opera/Chromium traffic controlled by this browser profile.</small></span></label>
+          <label class="check"><input id="relayFailClosed" type="checkbox"><span><strong>Fail closed</strong><small>Never silently fall back to your direct IP when the selected relay fails.</small></span></label>
+          <label class="check"><input id="relayBypassLocal" type="checkbox"><span><strong>Bypass local devices</strong><small>Keeps localhost, routers, NAS devices, and .local names reachable directly.</small></span></label>
+          <label class="field">Routing strategy
+            <select id="relayStrategy"><option value="smart">Smart fastest route</option><option value="manual">Pinned endpoint</option></select>
+          </label>
+          <label class="field">Idle re-benchmark interval (hours)<input id="relayAutoBenchmarkHours" type="number" min="1" max="168"></label>
+          <label class="field">Active endpoint<select id="relayActiveEndpoint"></select></label>
+        </div>
+
+        <div>
+          <label class="field">Relay endpoints
+            <textarea id="relayEndpoints" class="relay-textarea" spellcheck="false" placeholder="Montreal HTTPS | https | relay.example.net | 443 | optional-user&#10;Home SSH SOCKS | socks5 | 127.0.0.1 | 1080"></textarea>
+          </label>
+          <p class="format-help">Format: <code>Name | scheme | host | port | optional username</code>. Supported schemes: <code>https</code>, <code>http</code>, <code>socks5</code>, <code>socks4</code>. Chrome does not support SOCKS authentication.</p>
+        </div>
+      </div>
+
+      <div class="relay-actions">
+        <button id="benchmarkRelay" type="button" class="primary">Benchmark and connect fastest</button>
+        <button id="connectRelay" type="button">Connect selected</button>
+        <button id="disconnectRelay" type="button">Disconnect relay</button>
+        <button id="checkIp" type="button">Run manual IP check</button>
+      </div>
+
+      <div class="relay-grid compact-grid">
+        <div class="credential-box">
+          <h3>Session-only proxy credentials</h3>
+          <p>HTTP/HTTPS proxy passwords remain in extension session memory and are discarded when Opera closes.</p>
+          <label class="field">Endpoint<select id="credentialEndpoint"></select></label>
+          <label class="field">Username<input id="credentialUsername" type="text" autocomplete="username"></label>
+          <label class="field">Password<input id="credentialPassword" type="password" autocomplete="current-password"></label>
+          <button id="saveCredential" type="button">Load credential for this session</button>
+          <span id="credentialStatus" class="inline-status"></span>
+        </div>
+        <div class="status-box">
+          <h3>Route diagnostics</h3>
+          <p id="relayStatus">No relay configured.</p>
+          <p><strong>Observed public IP:</strong> <span id="publicIp">Not checked</span></p>
+          <pre id="relayResults"></pre>
+        </div>
+      </div>
+
+      <div class="opera-vpn-box">
+        <div><strong>Opera’s built-in free VPN</strong><p>Opera can automatically choose an optimal virtual location. Aegis cannot toggle this internal feature programmatically.</p></div>
+        <button id="operaVpnSettings" type="button">Open Opera VPN settings</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Privacy armor</h2>
+        <label class="check"><input id="stripTrackingParams" type="checkbox"><span><strong>Strip tracking parameters</strong><small>Removes common campaign IDs from top-level URLs.</small></span></label>
+        <label class="check"><input id="globalPrivacyControl" type="checkbox"><span><strong>Global Privacy Control</strong><small>Exposes navigator.globalPrivacyControl to pages.</small></span></label>
+        <label class="check"><input id="doNotTrack" type="checkbox"><span><strong>Do Not Track header</strong><small>Sends DNT: 1. Sites may ignore it.</small></span></label>
+        <label class="check"><input id="blockThirdPartyCookies" type="checkbox"><span><strong>Block third-party cookies</strong><small>Reduces cross-site identity linkage and ad profiling.</small></span></label>
+        <label class="check"><input id="disablePrivacySandbox" type="checkbox"><span><strong>Disable Privacy Sandbox ad APIs</strong><small>Disables Topics, Protected Audience, attribution measurement, and Related Website Sets when supported.</small></span></label>
+        <label class="check"><input id="disableHyperlinkAuditing" type="checkbox"><span><strong>Disable hyperlink auditing</strong><small>Disables browser ping auditing and removes ping attributes.</small></span></label>
+        <label class="check"><input id="disableNetworkPrediction" type="checkbox"><span><strong>Disable browser network prediction</strong><small>Reduces speculative DNS, TCP, and TLS connections.</small></span></label>
+        <label class="check"><input id="disablePageSpeculation" type="checkbox"><span><strong>Remove page speculation links</strong><small>Removes page-created prefetch, preconnect, DNS-prefetch, and prerender links.</small></span></label>
+        <label class="check"><input id="disableSearchSuggestions" type="checkbox"><span><strong>Disable omnibox search suggestions</strong><small>Stops typed address-bar text being sent for remote prediction.</small></span></label>
+        <label class="check"><input id="protectWebRTC" type="checkbox"><span><strong>Protect WebRTC addresses</strong><small>Disables non-proxied UDP. Forced on whenever Secure Relay is active.</small></span></label>
+        <label class="check"><input id="disableReferrers" type="checkbox"><span><strong>Suppress referrers</strong><small>Can break sign-in, checkout, and anti-fraud flows.</small></span></label>
+        <label class="check"><input id="blockLocalNetworkProbing" type="checkbox"><span><strong>LAN probe shield</strong><small>Blocks third-party sites from reaching private IP ranges through subresources and scripts.</small></span></label>
+      </div>
+
+      <div class="panel">
+        <h2>Permission firewall</h2>
+        <label class="check"><input id="blockNotifications" type="checkbox"><span><strong>Block website notifications</strong><small>Stops notification-spam permission prompts and delivery.</small></span></label>
+        <label class="check"><input id="blockGeolocation" type="checkbox"><span><strong>Block geolocation</strong><small>Maps and local services will need this disabled or site exceptions configured manually.</small></span></label>
+        <label class="check"><input id="blockCamera" type="checkbox"><span><strong>Block camera</strong><small>Globally denies camera access while enabled.</small></span></label>
+        <label class="check"><input id="blockMicrophone" type="checkbox"><span><strong>Block microphone</strong><small>Globally denies microphone access while enabled.</small></span></label>
+        <label class="check"><input id="blockAutomaticDownloads" type="checkbox"><span><strong>Block automatic multi-downloads</strong><small>Reduces drive-by download chains.</small></span></label>
+        <h3>Page defenses</h3>
+        <label class="check"><input id="popupGuard" type="checkbox"><span><strong>Block script-spawned popups</strong><small>Allows user-initiated windows and blocks background popunders.</small></span></label>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Threat engine</h2>
+        <label class="check"><input id="knownThreats" type="checkbox"><span><strong>Known threat feeds</strong><small>Compiles enabled domain intelligence into Chromium DNR rules.</small></span></label>
+        <label class="check"><input id="heuristicWarnings" type="checkbox"><span><strong>Phishing heuristics</strong><small>Scores punycode, credential URLs, raw IPs, lure words, and obfuscation.</small></span></label>
+        <label class="range">Warning threshold <output id="thresholdOut">55</output><input id="heuristicThreshold" type="range" min="25" max="90" step="5"></label>
+        <label class="field">Dangerous browser-classified downloads
+          <select id="dangerousDownloadAction"><option value="cancel">Cancel automatically</option><option value="warn">Warn only</option></select>
+        </label>
+        <label class="field">Uncommon or scan-pending downloads
+          <select id="suspiciousDownloadAction"><option value="warn">Warn</option><option value="ignore">Browser default only</option></select>
+        </label>
+      </div>
+      <div class="panel">
+        <h2>Intelligence sources</h2>
+        <label class="check"><input id="hagezi" type="checkbox"><span><strong>HaGeZi Threat Intelligence mini</strong><small>Malware, phishing, scam, spam, and hostile-domain intelligence without the general ad list.</small></span></label>
+        <label class="check"><input id="urlhaus" type="checkbox"><span><strong>URLhaus</strong><small>Active malware-distribution hosts from abuse.ch and Spamhaus.</small></span></label>
+        <label class="field">Update interval (hours)<input id="updateHours" type="number" min="1" max="168"></label>
+        <h3>Panic cleanup</h3>
+        <p>Clears normal website data while preserving Aegis extension settings.</p>
+        <label class="field">Time range<select id="panicHours"><option value="1">Last hour</option><option value="24">Last 24 hours</option><option value="168">Last 7 days</option><option value="0">All time</option></select></label>
+        <button id="panicWipe" type="button" class="danger-button">Clear cookies, cache, storage, history, and download history</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel"><h2>Trusted domains</h2><p>One domain per line. Subdomains inherit trust.</p><textarea id="allowlist" spellcheck="false"></textarea></div>
+      <div class="panel"><h2>Custom blocked domains</h2><p>One domain or URL per line. These are merged into the live threat set.</p><textarea id="customBlocklist" spellcheck="false"></textarea></div>
+    </section>
+
+    <section class="panel" id="matchPanel">
+      <div class="panel-head">
+        <div><h2>Why was this blocked?</h2><p>Network rules the browser matched recently, newest first. The browser keeps roughly the last five minutes and discards the rest, so refresh right after you see something break.</p></div>
+        <button id="refreshMatches" type="button">Refresh</button>
+      </div>
+      <div id="matchList" class="match-list"><p class="match-empty">Click Refresh to read the recent match log.</p></div>
+    </section>
+
+    <section class="panel footer-panel">
+      <div><strong id="saveStatus">Settings are loaded.</strong><p id="feedError"></p></div>
+      <div><button id="reset" type="button">Reset defaults</button><button id="save" type="button" class="primary">Save and compile</button></div>
+    </section>
+
+    <section class="notice"><strong>Security boundary</strong><p>This is a browser defense layer, not endpoint antivirus or perfect anonymity. It cannot hide traffic from applications outside Opera, prevent account-based identification, secure a compromised operating system, or make an untrustworthy relay safe.</p></section>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

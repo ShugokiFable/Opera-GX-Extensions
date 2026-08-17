@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NebulaGrab</title>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="popup-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div class="brand-copy">
+          <h1 class="brand-title">NebulaGrab</h1>
+          <p id="pageTitle" class="brand-subtitle">Reading active tab…</p>
+        </div>
+      </div>
+      <button id="dashboardBtn" class="btn btn-icon" title="Open dashboard">↗</button>
+    </header>
+
+    <section class="summary">
+      <div><strong id="totalCount">0</strong><span>detected</span></div>
+      <div><strong id="videoCount">0</strong><span>video</span></div>
+      <div><strong id="imageCount">0</strong><span>images</span></div>
+      <button id="scanBtn" class="btn btn-primary">Scan</button>
+      <button id="smartFetchBtn" class="btn">Smart</button>
+    </section>
+
+    <nav id="filters" class="filters">
+      <button class="pill active" data-kind="all">All</button>
+      <button class="pill" data-kind="video">Video</button>
+      <button class="pill" data-kind="image">Images</button>
+      <button class="pill" data-kind="stream">Streams</button>
+      <button class="pill" data-kind="audio">Audio</button>
+    </nav>
+
+    <section id="mediaList" class="media-list"></section>
+    <div id="status" class="status"></div>
+
+    <footer class="footer">
+      <button id="clearBtn" class="btn btn-danger">Clear</button>
+      <span>Authorized, non-DRM media only</span>
+    </footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

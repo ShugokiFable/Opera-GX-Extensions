@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxukq/ScdjMXNqL0RHRDhRtrbt3lSihBVU0ajk45NDgYAk4g4prOpqAOSG8X6MaN105zWFbXDpni6axWNHbmJz2WLYSetB4SG8XjuX8PFiwQW62tgf6ElL+tlBDL4+AyyJzXYkh8P+ZLD28+RaaLh+LpRy5irEXyEg9KBaRcdGknEkqOYpda02Z7/QEelw+Upt4ZwYcxSOxR0jCQJTfiWGEcQ6uBpNmJNDBSIWQ7tGRfoCQRFLI4b6VRBQOtQushzTniiH64xX8Xz+rGdXN9pShRd5aPpanQEDBx6cvSYmbXbYIfpseCGnJwz3NX4pOJ6d+qh2nHooYEnOkRCKZXEHQIDAQAB",
+  "name": "NEXUS Research",
+  "short_name": "NEXUS",
+  "description": "Deep web research through OpenRouter with page intelligence, citations, vision, privacy controls, and research sessions.",
+  "version": "1.0.1",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "downloads",
+    "scripting",
+    "sidePanel",
+    "storage",
+    "tabs"
+  ],
+  "optional_host_permissions": [
+    "<all_urls>"
+  ],
+  "host_permissions": [
+    "https://openrouter.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open NEXUS Research",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Open NEXUS Research"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

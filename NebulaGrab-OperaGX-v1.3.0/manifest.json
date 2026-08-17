@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "NebulaGrab",
+  "short_name": "NebulaGrab",
+  "version": "1.3.1",
+  "description": "Dark Opera GX media detector with resumable downloads, HLS/DASH fragment caching, grouped SEG recovery, Smart Fetch, and non-DRM remuxing.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsB90ybcB+FZaZ/41V87tAUeOcB4RH89NGeSDpC2N0VBkPK40iYjM8DSBmK2u5ifU3UpIakiW/FgVpJr75/I5/qCijoOnDX+DXN49K67qkvjbiiiv+FH4GdNxF3DYceMTCDHgI09JTcmOH0dVK+p3X5RO/S+NNHxS6HojtXiivlMWXTww5CmBQl5HulEjk8twz7i+v4p8XF6yVNKAsS1ULWOV8guLgVHv88vIYO7+He8XRCZgQ6JPZ3d2UXMGEEhttX7ZCB7aEx2xKL9i2fs/yEVdTeW5eKtRuaqVIE9myxW+SNH84yxCK7nh1O6xgt0c393UYaCAwIjuyRSq3kAonQIDAQAB",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "downloads",
+    "notifications",
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_title": "NebulaGrab",
+    "default_popup": "ui/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "ui/dashboard.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/page-scanner.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/page-hook.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

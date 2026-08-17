@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OLED Forge GX Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand"><span class="logo"></span><div><b>OLED Forge</b><small>GX control matrix</small></div></div>
+      <nav>
+        <a href="#rendering" class="active">Rendering</a>
+        <a href="#media">Media</a>
+        <a href="#panel">Panel guard</a>
+        <a href="#performance">Performance</a>
+        <a href="#sites">Site rules</a>
+        <a href="#privacy">Privacy & limits</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header><div><h1>OLED rendering controls</h1><p>Precision surface remapping with protected text contrast.</p></div><div id="saved">Saved locally</div></header>
+
+      <section id="rendering">
+        <h2>Rendering engine</h2>
+        <div class="grid two">
+          <label class="tile toggle"><span><b>Enable globally</b><small>Master switch for all normal web pages.</small></span><input id="enabled" type="checkbox"></label>
+          <label class="tile toggle"><span><b>Convert light pages</b><small>Builds a dark palette element by element. No global inversion.</small></span><input id="convertLightPages" type="checkbox"></label>
+          <label class="tile toggle"><span><b>Pure black neutrals</b><small>Near-black neutral surfaces collapse to OLED black.</small></span><input id="pureBlack" type="checkbox"></label>
+          <label class="tile toggle"><span><b>Preserve brand colors</b><small>Keeps saturated accents when they already meet contrast.</small></span><input id="preserveBrandColors" type="checkbox"></label>
+          <label class="tile toggle"><span><b>Sharpen text</b><small>Removes text shadows and requests geometric text rendering.</small></span><input id="sharpenText" type="checkbox"></label>
+        </div>
+
+        <div class="tile controls">
+          <label><span><b>OLED strength</b><small>How strongly eligible surfaces move toward their OLED targets.</small></span><output id="strengthOut"></output></label>
+          <input id="strength" type="range" min="0" max="100">
+          <label><span><b>Black capture threshold</b><small>Higher values capture more dark-gray surfaces.</small></span><output id="blackCutoffOut"></output></label>
+          <input id="blackCutoff" type="range" min="4" max="40">
+          <label><span><b>Text contrast target</b><small>WCAG ratio target used by the foreground safety pass.</small></span><output id="targetContrastOut"></output></label>
+          <input id="targetContrast" type="range" min="3" max="10" step="0.5">
+        </div>
+      </section>
+
+      <section id="media">
+        <h2>Media handling</h2>
+        <div class="tile">
+          <label for="mediaMode"><b>Image and video processing</b><small>Untouched is safest. Balanced and Deep use a deliberate CSS filter and may also affect subtitles baked into video.</small></label>
+          <select id="mediaMode"><option value="untouched">Untouched</option><option value="balanced">Balanced depth</option><option value="deep">Deep cinema</option></select>
+        </div>
+      </section>
+
+      <section id="panel">
+        <h2>Panel guard</h2>
+        <div class="grid two">
+          <label class="tile toggle"><span><b>Enable panel guard</b><small>Dims fixed and sticky webpage UI after inactivity.</small></span><input id="panelGuard" type="checkbox"></label>
+          <div class="tile field"><label for="idleDimMinutes"><b>Idle delay</b><small>0 disables idle dimming.</small></label><input id="idleDimMinutes" type="number" min="0" max="120" step="1"><span>minutes</span></div>
+          <div class="tile field"><label for="idleShade"><b>Page shade</b><small>Black overlay strength while idle.</small></label><input id="idleShade" type="number" min="0" max="45" step="1"><span>%</span></div>
+          <div class="tile field"><label for="staticUiOpacity"><b>Static UI opacity</b><small>Opacity for fixed webpage elements while idle.</small></label><input id="staticUiOpacity" type="number" min="35" max="100" step="1"><span>%</span></div>
+        </div>
+      </section>
+
+      <section id="performance">
+        <h2>Performance</h2>
+        <div class="tile">
+          <label for="performance"><b>DOM processing profile</b><small>All profiles are idle-batched. Turbo converges fastest on huge feeds; Eco reduces work per slice.</small></label>
+          <select id="performance"><option value="eco">Eco</option><option value="balanced">Balanced</option><option value="turbo">Turbo</option></select>
+        </div>
+      </section>
+
+      <section id="sites">
+        <h2>Excluded domains</h2>
+        <div class="tile stack">
+          <label for="excludedSites"><b>Never modify these sites</b><small>One hostname per line. Subdomains are included automatically.</small></label>
+          <textarea id="excludedSites" rows="8" placeholder="example.com&#10;work-app.internal"></textarea>
+        </div>
+      </section>
+
+      <section id="privacy">
+        <h2>Privacy & hard limits</h2>
+        <div class="tile prose">
+          <p>OLED Forge processes page styles inside your browser. It has no analytics, no remote API, no account system, and no network service.</p>
+          <p>A browser extension cannot change monitor firmware, Windows HDR calibration, OLED compensation cycles, browser chrome, or the pixels inside protected DRM video. It can only alter normal webpage rendering.</p>
+        </div>
+      </section>
+
+      <footer><button id="reset">Restore defaults</button><button id="save">Save settings</button></footer>
+    </main>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

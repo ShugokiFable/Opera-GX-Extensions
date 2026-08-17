@@ -1,0 +1,51 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #030305;
+  color: #f4f3f8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; width: 380px; min-height: 590px; background: radial-gradient(circle at 88% -8%, rgba(111, 74, 255, .26), transparent 33%), #030305; }
+main { padding: 18px; }
+.hero { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; margin-bottom: 16px; }
+.mark { width: 44px; height: 44px; border: 1px solid #332c51; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, #14101f, #07070a); box-shadow: inset 0 1px rgba(255,255,255,.05), 0 16px 40px rgba(0,0,0,.55); }
+.mark span { width: 20px; height: 20px; border: 4px solid #8d73ff; border-radius: 50%; box-shadow: 0 0 18px rgba(128, 95, 255, .8); position: relative; }
+.mark span::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #000; }
+h1 { font-size: 17px; margin: 0; letter-spacing: -.02em; } h1 b { color: #927cff; font-weight: 800; }
+.hero p { margin: 3px 0 0; color: #868391; font-size: 11px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status { font-size: 9px; font-weight: 800; letter-spacing: .1em; padding: 6px 8px; border-radius: 999px; color: #9e95bd; border: 1px solid #2a2637; background: #0b0a0f; }
+.status.live { color: #cfc5ff; border-color: #504285; background: #171126; box-shadow: 0 0 20px rgba(120, 87, 255, .17); }
+.card { border: 1px solid #211f29; background: rgba(12, 11, 16, .92); border-radius: 16px; padding: 15px; margin-bottom: 11px; box-shadow: inset 0 1px rgba(255,255,255,.025), 0 13px 38px rgba(0,0,0,.2); }
+.master, .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.label { display: block; font-size: 13px; font-weight: 700; }
+small { display: block; margin-top: 3px; color: #7f7c88; font-size: 10.5px; line-height: 1.35; }
+.divider { height: 1px; background: #22202a; margin: 14px 0; }
+.switch { position: relative; width: 42px; height: 24px; flex: 0 0 auto; }
+.switch input { opacity: 0; position: absolute; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: #2a2830; border: 1px solid #393641; transition: .2s; }
+.switch span::after { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; border-radius: 50%; background: #aaa7b2; transition: .2s; box-shadow: 0 2px 6px #000; }
+.switch input:checked + span { background: #6d4eff; border-color: #8a72ff; box-shadow: 0 0 18px rgba(108, 76, 255, .34); }
+.switch input:checked + span::after { transform: translateX(18px); background: white; }
+.range-head { display: flex; justify-content: space-between; font-size: 11px; color: #b8b5c0; margin: 12px 0 5px; }
+.range-head:first-of-type { margin-top: 0; }
+output { color: #9b83ff; font-weight: 800; }
+input[type="range"] { width: 100%; accent-color: #795cff; height: 4px; }
+.presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 11px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.presets button { border: 1px solid #24212e; background: #0c0b10; border-radius: 11px; padding: 9px 8px; color: #aaa6b3; font-size: 10.5px; }
+.presets button:hover { border-color: #59479a; color: #eeeaff; background: #151021; }
+.compact { padding: 4px 15px; }
+.compact .row { padding: 11px 0; }
+.compact .row + .row { border-top: 1px solid #201e26; }
+.click { cursor: pointer; }
+.check { width: 17px; height: 17px; accent-color: #7558ff; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; text-align: center; }
+.stats div + div { border-left: 1px solid #24212d; }
+.stats b { display: block; font-size: 16px; color: #e8e4f3; }
+.stats span { display: block; color: #6f6b78; font-size: 9px; margin-top: 2px; }
+footer { display: grid; grid-template-columns: .85fr 1.4fr; gap: 8px; }
+footer button { border-radius: 12px; padding: 11px; font-size: 11px; font-weight: 750; }
+.secondary { border: 1px solid #2a2732; background: #0d0c11; color: #aaa7b1; }
+.primary { border: 1px solid #846cff; background: linear-gradient(180deg, #795cff, #5d3fe8); color: white; box-shadow: 0 10px 24px rgba(94, 62, 233, .26); }
+.notice { font-size: 10px; line-height: 1.45; color: #b6aacf; padding: 10px 2px 0; margin: 0; }
+button:focus-visible, input:focus-visible { outline: 2px solid #9a85ff; outline-offset: 2px; }

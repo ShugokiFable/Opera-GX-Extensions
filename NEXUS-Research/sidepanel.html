@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>NEXUS Research</title>
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="NEXUS Research">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div>
+          <div class="brand-title">NEXUS</div>
+          <div class="brand-subtitle">RESEARCH ENGINE</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="sessionsButton" class="icon-button" title="Research sessions" aria-label="Research sessions">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></svg>
+        </button>
+        <button id="settingsButton" class="icon-button" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM4 12H2m20 0h-2M12 4V2m0 20v-2m5.66-13.66 1.42-1.42M4.92 19.08l1.42-1.42m0-11.32L4.92 4.92m14.16 14.16-1.42-1.42"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="control-deck">
+      <label class="model-field">
+        <span>MODEL</span>
+        <input id="modelInput" list="modelList" autocomplete="off" spellcheck="false" placeholder="~openai/gpt-latest" />
+        <datalist id="modelList"></datalist>
+      </label>
+      <div class="depth-switch" role="group" aria-label="Research depth">
+        <button data-depth="quick">QUICK</button>
+        <button data-depth="deep" class="active">DEEP</button>
+        <button data-depth="abyss">ABYSS</button>
+      </div>
+      <div class="status-row">
+        <span id="connectionStatus" class="status-pill"><i></i>API KEY REQUIRED</span>
+        <span id="costStatus" class="status-readout">$0.0000</span>
+        <span id="tokenStatus" class="status-readout">0 TOKENS</span>
+      </div>
+    </section>
+
+    <main id="conversation" class="conversation" aria-live="polite">
+      <section id="welcome" class="welcome-card">
+        <div class="scan-orb" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="eyebrow">OPENROUTER-POWERED RESEARCH</p>
+        <h1>Find the obscure signal buried under the web’s static.</h1>
+        <p>NEXUS can search the live web, fetch sources, inspect the current page, compare model perspectives, and return cited answers.</p>
+        <div class="feature-grid">
+          <button class="starter" data-prompt="Trace the most authoritative and obscure sources on this topic, explain disagreements, and cite every major claim.">
+            <b>DEEP TRACE</b><span>Primary sources, niche forums, archives</span>
+          </button>
+          <button class="starter" data-prompt="Audit the current page. Identify hidden assumptions, unsupported claims, technical details, and what I should verify next.">
+            <b>PAGE AUTOPSY</b><span>DOM, metadata, links, structured data</span>
+          </button>
+          <button class="starter" data-prompt="Build a research map for this subject: terminology, key entities, source clusters, unresolved questions, and the fastest path to expert-level understanding.">
+            <b>KNOWLEDGE MAP</b><span>Terminology, entities, blind spots</span>
+          </button>
+          <button class="starter" data-prompt="Investigate this claim adversarially. Find the strongest evidence for it, the strongest evidence against it, and give a calibrated verdict.">
+            <b>CLAIM FORENSICS</b><span>Contradictions and confidence</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="composer-shell">
+      <div id="contextBar" class="context-bar">
+        <button id="pageToggle" class="context-chip active" title="Include the current page in the next request">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM14 3v4h4"/></svg>
+          PAGE
+        </button>
+        <button id="screenshotToggle" class="context-chip" title="Include a visible screenshot for vision-capable models">
+          <svg viewBox="0 0 24 24"><path d="M4 7h4l1.5-2h5L16 7h4v12H4zM12 10a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+          VISION
+        </button>
+        <button id="tabsButton" class="context-chip" title="Select open tabs to include">
+          <svg viewBox="0 0 24 24"><path d="M4 5h11v13H4zM9 2h11v13h-3"/></svg>
+          TABS <span id="tabCount">0</span>
+        </button>
+        <button id="clearContextButton" class="context-clear" title="Clear selected context">CLEAR</button>
+      </div>
+      <div class="composer">
+        <textarea id="promptInput" rows="1" placeholder="Ask anything. NEXUS will hunt the difficult sources…" spellcheck="true"></textarea>
+        <div class="composer-actions">
+          <button id="attachButton" class="mini-button" title="Paste a URL into the prompt or select tabs">
+            <svg viewBox="0 0 24 24"><path d="m9 12 6-6a3 3 0 1 1 4 4l-8 8a5 5 0 0 1-7-7l8-8"/></svg>
+          </button>
+          <button id="sendButton" class="send-button" title="Run research">
+            <span>RUN</span>
+            <svg viewBox="0 0 24 24"><path d="m5 12 14-7-4 14-3-6z"/></svg>
+          </button>
+          <button id="stopButton" class="stop-button hidden" title="Stop generation"><span></span></button>
+        </div>
+      </div>
+      <div class="composer-meta"><span>Ctrl/⌘ + Enter to run</span><span id="privacyIndicator">LOCAL SESSION • ZDR OFF</span></div>
+    </footer>
+  </div>
+
+  <dialog id="settingsDialog" class="modal">
+    <form method="dialog" class="modal-card settings-card">
+      <header><div><p class="eyebrow">CONFIGURATION</p><h2>Research Core</h2></div><button class="icon-button close-modal" value="cancel" aria-label="Close">×</button></header>
+      <div class="settings-scroll">
+        <section class="setting-section">
+          <h3>OpenRouter</h3>
+          <label>API key
+            <div class="secret-field"><input id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-or-v1-…" /><button id="revealKeyButton" type="button">SHOW</button></div>
+          </label>
+          <label class="toggle-row"><span><b>Persist key on this browser</b><small>Off stores it in chrome.storage.session and clears it when the browser session ends.</small></span><input id="persistKeyInput" type="checkbox" /></label>
+          <label>Fallback models <small>Comma-separated slugs, tried in order.</small><input id="fallbackModelsInput" type="text" placeholder="~google/gemini-pro-latest, ~anthropic/claude-sonnet-latest" /></label>
+        </section>
+        <section class="setting-section">
+          <h3>Research behavior</h3>
+          <div class="two-col">
+            <label>Reasoning<select id="reasoningInput"><option value="none">None</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+            <label>Maximum output tokens<input id="maxTokensInput" type="number" min="512" max="65536" step="256" /></label>
+          </div>
+          <div class="two-col">
+            <label>Search engine<select id="searchEngineInput"><option value="auto">Auto</option><option value="exa">Exa</option></select></label>
+            <label>Search context<select id="searchContextInput"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>
+          </div>
+          <label>Allowed domains <small>Optional, comma-separated. Leave blank for the open web.</small><input id="allowedDomainsInput" type="text" placeholder="nasa.gov, archive.org" /></label>
+          <label>Excluded domains <small>Optional, comma-separated.</small><input id="excludedDomainsInput" type="text" placeholder="pinterest.com" /></label>
+          <label class="toggle-row"><span><b>Auto-include current page</b><small>Extract visible text, metadata, headings, links, tables, code, and JSON-LD on demand.</small></span><input id="autoPageInput" type="checkbox" /></label>
+        </section>
+        <section class="setting-section">
+          <h3>Privacy and routing</h3>
+          <label class="toggle-row"><span><b>Deny provider data collection</b><small>Routes only to providers OpenRouter marks as not collecting user data.</small></span><input id="denyDataInput" type="checkbox" /></label>
+          <label class="toggle-row"><span><b>Enforce Zero Data Retention</b><small>May reduce model/provider availability.</small></span><input id="zdrInput" type="checkbox" /></label>
+          <label class="toggle-row"><span><b>Require exact parameter support</b><small>Avoids providers that silently ignore requested features.</small></span><input id="requireParamsInput" type="checkbox" /></label>
+          <label class="toggle-row"><span><b>Allow provider fallbacks</b><small>Improves uptime and routing resilience.</small></span><input id="providerFallbacksInput" type="checkbox" /></label>
+        </section>
+        <section class="setting-section danger-zone">
+          <h3>Browser access</h3>
+          <p>Current-page access is granted by your click. Optional all-site access is needed only to extract multiple background tabs.</p>
+          <div class="button-row"><button id="grantSitesButton" type="button" class="secondary-button">GRANT ALL-SITE ACCESS</button><button id="revokeSitesButton" type="button" class="ghost-button">REVOKE</button></div>
+        </section>
+      </div>
+      <footer><span id="settingsMessage"></span><button id="saveSettingsButton" type="button" class="primary-button">SAVE CONFIGURATION</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="tabsDialog" class="modal">
+    <form method="dialog" class="modal-card tabs-card">
+      <header><div><p class="eyebrow">CONTEXT INTAKE</p><h2>Select tabs</h2></div><button class="icon-button close-modal" value="cancel" aria-label="Close">×</button></header>
+      <div class="tabs-toolbar"><input id="tabSearchInput" type="search" placeholder="Filter open tabs…" /><button id="selectAllTabsButton" type="button">SELECT VISIBLE</button></div>
+      <div id="tabsList" class="tabs-list"></div>
+      <footer><span id="tabsPermissionHint"></span><button id="applyTabsButton" type="button" class="primary-button">APPLY CONTEXT</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="sessionsDialog" class="modal">
+    <form method="dialog" class="modal-card sessions-card">
+      <header><div><p class="eyebrow">LOCAL ARCHIVE</p><h2>Research sessions</h2></div><button class="icon-button close-modal" value="cancel" aria-label="Close">×</button></header>
+      <div class="tabs-toolbar"><input id="sessionSearchInput" type="search" placeholder="Search sessions…" /><button id="newSessionButton" type="button">NEW</button></div>
+      <div id="sessionsList" class="sessions-list"></div>
+      <footer><button id="exportAllButton" type="button" class="ghost-button">EXPORT JSON</button><button id="clearSessionsButton" type="button" class="danger-button">CLEAR ARCHIVE</button></footer>
+    </form>
+  </dialog>
+
+  <script src="panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PrismShot GX</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true"><span></span></div>
+      <div class="brand-copy">
+        <strong>PRISMSHOT <i>GX</i></strong>
+        <small>VIDEO FRAME ENGINE</small>
+      </div>
+      <button class="icon-button" id="openOptions" title="Settings" aria-label="Open settings">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.41 1.42-.07-.07a1.7 1.7 0 0 0-1.88-.33 1.7 1.7 0 0 0-1.03 1.56V20h-2v-.48a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.33l-.07.07-1.41-1.42.06-.06A1.7 1.7 0 0 0 9.4 15a1.7 1.7 0 0 0-1.56-1.03H7.4v-2h.44A1.7 1.7 0 0 0 9.4 10.9a1.7 1.7 0 0 0-.33-1.88L9 8.96l1.41-1.42.07.07a1.7 1.7 0 0 0 1.88.33 1.7 1.7 0 0 0 1.03-1.56V6h2v.38a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.33l.07-.07 1.41 1.42-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03h.46v2h-.46A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+      </button>
+    </header>
+
+    <section class="status-card" id="statusCard">
+      <div class="status-orb" id="statusOrb"></div>
+      <div class="status-copy">
+        <span id="statusTitle">Scanning tab...</span>
+        <small id="statusMeta">Looking for decoded video frames</small>
+      </div>
+      <span class="engine-badge" id="engineBadge">AUTO</span>
+    </section>
+
+    <section class="capture-panel">
+      <button class="capture-button" id="captureButton">
+        <span class="capture-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.2-2h5.6L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.2"/></svg>
+        </span>
+        <span><b>CAPTURE FRAME</b><small id="captureHint">Lossless PNG to Downloads</small></span>
+      </button>
+      <div class="quick-actions">
+        <button id="stepBack" title="Previous frame"><span>−1</span> FRAME</button>
+        <button id="copyButton" title="Copy frame"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg> COPY</button>
+        <button id="stepForward" title="Next frame"><span>+1</span> FRAME</button>
+      </div>
+    </section>
+
+    <section class="controls-grid">
+      <label>
+        <span>ENGINE</span>
+        <select id="captureMode">
+          <option value="auto">Auto hybrid</option>
+          <option value="native">Clean source</option>
+          <option value="visible">What you see</option>
+        </select>
+      </label>
+      <label>
+        <span>FORMAT</span>
+        <select id="format">
+          <option value="png">PNG lossless</option>
+          <option value="webp">WebP</option>
+          <option value="jpeg">JPEG</option>
+        </select>
+      </label>
+      <label>
+        <span>OUTPUT</span>
+        <select id="upscale">
+          <option value="1x">Native / rendered</option>
+          <option value="2x">2× upscale</option>
+          <option value="4k">Fit up to 4K</option>
+          <option value="8k">Fit up to 8K</option>
+        </select>
+      </label>
+      <label>
+        <span>BURST</span>
+        <select id="burstCount">
+          <option value="1">Single frame</option>
+          <option value="3">3 frames</option>
+          <option value="5">5 frames</option>
+          <option value="10">10 frames</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="quality-row" id="qualityRow">
+      <div><span>ENCODE QUALITY</span><b id="qualityValue">94%</b></div>
+      <input id="quality" type="range" min="50" max="100" step="1" value="94">
+    </section>
+
+    <section class="recent-section">
+      <div class="section-title">
+        <span>RECENT CAPTURES</span>
+        <button id="clearHistory">CLEAR</button>
+      </div>
+      <div class="history" id="history">
+        <div class="empty-history">No frames captured yet.</div>
+      </div>
+    </section>
+
+    <footer>
+      <span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>S</kbd> capture</span>
+      <span id="footerState">READY</span>
+    </footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

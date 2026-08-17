@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmOL0yWw0cirCNkg6/8S3ehhy/hp6aoqch/QRveE+EszFV6FONgQsmip5xtfqywpidHpk5WDEf9yQs3AogDnzee8Cb+T78WXfcUKNIQkqdj5vBxSedqfLO/Xyy2SvcuZqCQUNerCyl3ifxSR7GauRvI8cIc0M5L3yRUjk2keHU3aBCECJQEmI9Ca80FpgnEjD+wsDuQB1tm8fmzn4/TjtNwNYTx8OGDYjqYxj7Z/4oL7oaYb2+eJB9tVqEeczKzye63Z7tAXuF+UfbiG0TB1VeFFulKD7y7NRGU1BMamPKWrJqTaIz++PHLOqMIyJ4WDQkqMgtoymHQGJ4ODKdL6KLQIDAQAB",
+  "name": "OLED Forge GX",
+  "short_name": "OLED Forge",
+  "version": "1.0.1",
+  "description": "Adaptive true-black rendering with smarter surface harmonization, prose clarity, contrast protection, media controls, and OLED panel safeguards for Opera GX and Chromium browsers.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "OLED Forge GX",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "lib/color.js",
+        "lib/detection.js",
+        "content/engine.js"
+      ],
+      "css": [
+        "content/engine.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    }
+  ],
+  "options_page": "options/options.html",
+  "commands": {
+    "toggle-oled-forge": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      },
+      "description": "Toggle OLED Forge on the current page"
+    }
+  }
+}

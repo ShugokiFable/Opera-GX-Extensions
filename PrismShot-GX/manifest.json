@@ -1,0 +1,77 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyTMpePYyXGaJ+4cURDfGYKsgsBD7xZwqR6B2YoYV5a8t9H5DeJW2/S+rDRbRnVQlDKzVSK7icwVmZIGor1OaCz7IDPYIY8hbMxkdY842MMpw31Vglu2LH0e7dxUy1ZGci75wf5g6ni5ZKNnQSboy7tlKlnG4ShTTWRxZ9DXpRzWQMzRVrEOmyV+ZGTx/0rEA+24G0r4mncFhcCR+IX6HxhHiKxIlUoR+W/urIE5X3unoW7fHq8RC5sHmfGRlTbQSG1IZQHY1xtEeK8/yXqbYoZIwzY6FuHaWfZIvxLAznRFWtH9E3LJN3aaIRPFLWyGvgGOxj4rT6eU8I/GBXEc/nwIDAQAB",
+  "name": "PrismShot GX - Video Frame Capture",
+  "short_name": "PrismShot GX",
+  "version": "1.0.0",
+  "minimum_chrome_version": "119",
+  "description": "Fast, high-quality video frame screenshots with source-resolution capture, visible-frame fallback, clipboard, burst mode, and a dark Opera GX interface.",
+  "permissions": [
+    "activeTab",
+    "clipboardWrite",
+    "contextMenus",
+    "downloads",
+    "offscreen",
+    "scripting",
+    "storage",
+    "webNavigation"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_title": "PrismShot GX",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ],
+  "commands": {
+    "capture-frame": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Capture the active video frame"
+    },
+    "copy-frame": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "Command+Shift+X"
+      },
+      "description": "Copy the active video frame"
+    },
+    "toggle-overlay": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+V",
+        "mac": "Command+Shift+V"
+      },
+      "description": "Toggle the on-video capture controls"
+    }
+  },
+  "options_page": "options/options.html",
+  "incognito": "split",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

@@ -1,0 +1,16 @@
+# Extension signing keys. Anyone holding one can sign a package the browser
+# accepts as a legitimate update to your extension. Never publish these.
+_Deploy/keys/
+*.pem
+
+# Legacy duplicate source trees. Every extension now has exactly one copy at the
+# top level; these mirrors are kept locally for reference only.
+zSources/
+
+node_modules/
+dist/
+release/
+*.log
+Thumbs.db
+desktop.ini
+.DS_Store

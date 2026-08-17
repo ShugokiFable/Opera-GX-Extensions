@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OLED Forge GX</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <div class="mark" aria-hidden="true"><span></span></div>
+      <div>
+        <h1>OLED Forge <b>GX</b></h1>
+        <p id="host">Connecting…</p>
+      </div>
+      <div id="pageKind" class="status">OFFLINE</div>
+    </header>
+
+    <section class="master card">
+      <div>
+        <span class="label">Global engine</span>
+        <small>Adaptive surface mapping</small>
+      </div>
+      <label class="switch"><input id="enabled" type="checkbox"><span></span></label>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <div>
+          <span class="label">This site</span>
+          <small id="siteState">Per-domain override</small>
+        </div>
+        <label class="switch"><input id="siteEnabled" type="checkbox"><span></span></label>
+      </div>
+
+      <div class="divider"></div>
+
+      <label class="range-head" for="strength">
+        <span>OLED strength</span><output id="strengthOut">88%</output>
+      </label>
+      <input id="strength" type="range" min="0" max="100" step="1">
+
+      <label class="range-head" for="blackCutoff">
+        <span>Black capture</span><output id="cutoffOut">18%</output>
+      </label>
+      <input id="blackCutoff" type="range" min="4" max="40" step="1">
+    </section>
+
+    <section class="presets" aria-label="Presets">
+      <button data-preset="native">Native black</button>
+      <button data-preset="balanced">Balanced</button>
+      <button data-preset="cinema">Cinema</button>
+      <button data-preset="reading">Reading</button>
+    </section>
+
+    <section class="card compact">
+      <label class="row click">
+        <div><span class="label">Convert light pages</span><small>Dark theme without inversion</small></div>
+        <input id="convertLightPages" type="checkbox" class="check">
+      </label>
+      <label class="row click">
+        <div><span class="label">Pure black neutrals</span><small>Maps near-black gray surfaces to #000</small></div>
+        <input id="pureBlack" type="checkbox" class="check">
+      </label>
+      <label class="row click">
+        <div><span class="label">Panel guard</span><small>Optional idle dimming for static UI</small></div>
+        <input id="panelGuard" type="checkbox" class="check">
+      </label>
+    </section>
+
+    <section class="card stats">
+      <div><b id="surfaces">0</b><span>surfaces</span></div>
+      <div><b id="text">0</b><span>text fixes</span></div>
+      <div><b id="queue">0</b><span>queued</span></div>
+    </section>
+
+    <footer>
+      <button id="rescan" class="secondary">Rescan</button>
+      <button id="options" class="primary">Advanced controls</button>
+    </footer>
+    <p id="notice" class="notice" hidden></p>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+[
+  {
+    "id": 3001,
+    "priority": 100,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "requestDomains": [
+        "doubleclick.net",
+        "googlesyndication.com",
+        "googleadservices.com",
+        "adservice.google.com",
+        "adnxs.com",
+        "adsrvr.org",
+        "amazon-adsystem.com",
+        "casalemedia.com",
+        "criteo.com",
+        "criteo.net",
+        "openx.net",
+        "pubmatic.com",
+        "rubiconproject.com",
+        "scorecardresearch.com",
+        "taboola.com",
+        "outbrain.com",
+        "zedo.com",
+        "moatads.com",
+        "quantserve.com",
+        "smartadserver.com",
+        "advertising.com",
+        "adform.net",
+        "adroll.com",
+        "bidswitch.net",
+        "contextweb.com",
+        "lijit.com",
+        "sharethrough.com",
+        "teads.tv",
+        "yieldmo.com",
+        "revcontent.com",
+        "mgid.com",
+        "media.net",
+        "33across.com",
+        "smaato.net",
+        "spotxchange.com",
+        "spotx.tv",
+        "undertone.com",
+        "exponential.com",
+        "yieldlab.net",
+        "indexww.com",
+        "gumgum.com",
+        "adcolony.com",
+        "unityads.unity3d.com",
+        "applovin.com"
+      ],
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com"
+      ],
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "media",
+        "websocket",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 3002,
+    "priority": 90,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://[^/]+/(?:ads?|advert(?:ising|isement)?s?|prebid|vast|vpaid|sponsored)(?:[/?._-]|$)",
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com"
+      ],
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 3003,
+    "priority": 80,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||google-analytics.com/collect",
+      "excludedInitiatorDomains": [
+        "youtube.com",
+        "youtube-nocookie.com"
+      ],
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 3004,
+    "priority": 110,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "requestDomains": [
+        "googleadservices.com",
+        "doubleclick.net",
+        "clickserve.dartsearch.net",
+        "adclick.g.doubleclick.net"
+      ],
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  }
+]

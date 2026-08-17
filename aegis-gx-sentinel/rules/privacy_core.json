@@ -1,0 +1,64 @@
+[
+  {
+    "id": 1,
+    "priority": 2000,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "removeParams": [
+              "utm_source",
+              "utm_medium",
+              "utm_campaign",
+              "utm_term",
+              "utm_content",
+              "utm_id",
+              "utm_name",
+              "utm_cid",
+              "utm_reader",
+              "utm_viz_id",
+              "gclid",
+              "dclid",
+              "gbraid",
+              "wbraid",
+              "fbclid",
+              "msclkid",
+              "twclid",
+              "mc_cid",
+              "mc_eid",
+              "mkt_tok",
+              "vero_id",
+              "oly_anon_id",
+              "oly_enc_id",
+              "_hsenc",
+              "_hsmi",
+              "hsCtaTracking",
+              "igshid",
+              "si",
+              "spm",
+              "ref_src",
+              "ref_url",
+              "campaignid",
+              "adgroupid",
+              "adid",
+              "wickedid",
+              "yclid",
+              "rb_clickid",
+              "s_cid",
+              "vero_conv",
+              "epik",
+              "ttclid"
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "regexFilter": "[?&](?:utm_[a-z0-9_]+|gclid|dclid|gbraid|wbraid|fbclid|msclkid|twclid|mc_cid|mc_eid|mkt_tok|vero_id|oly_anon_id|oly_enc_id|_hsenc|_hsmi|hsCtaTracking|igshid|si|spm|ref_src|ref_url|campaignid|adgroupid|adid|wickedid|yclid|rb_clickid|s_cid|vero_conv|epik|ttclid)=",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  }
+]

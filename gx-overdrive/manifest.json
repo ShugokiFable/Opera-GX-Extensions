@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyNRDNG/6xwuFZTv2+xzckYnMQRZMSYSi/COWRb+OHp9SCrVgOVmJqUU/HDEgcmp5Iy1qyFlehjZwfmUt7cATS5Yi6oPoTGhjYRK+4g9H4egcRjsVMsN1GUgRiTHyA/lyq6m6/inF4Q6SCFZQxD1jMLW2DC9JiXqdoeknJlBTf2SumkxelVEckPqXYYnJcvHBlMChhhdsbhmIut0Pu6a5WJTQO6id8b097DS8W1qpN+G2up3BamCf8gW+EwSxW98P+LQEF0wf49gmos4OXBsFZjS/PKQtFYKqy8q+JwoxrxikWW1f0m3LmKv6nm5m6QxKGr7CporDuBzcvrbYWdlbyQIDAQAB",
+  "name": "GX Overdrive: Memory, Chat & Download Engine",
+  "short_name": "GX Overdrive",
+  "version": "1.2.0",
+  "description": "Local performance governor for Opera GX and Chromium: long-chat rendering control, RAM-pressure tab hibernation, media throttling, and download recovery.",
+  "minimum_chrome_version": "121",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "browsingData",
+    "contextMenus",
+    "downloads",
+    "power",
+    "scripting",
+    "storage",
+    "system.memory",
+    "tabs"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "GX Overdrive",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "dashboard.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "boost-current-tab": {
+      "suggested_key": {
+        "default": "Alt+Shift+G"
+      },
+      "description": "Apply GX Overdrive to the current tab"
+    },
+    "hibernate-other-tabs": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Hibernate eligible background tabs"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

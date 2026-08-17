@@ -1,0 +1,11 @@
+{
+  "name": "oled-forge-gx",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Adaptive OLED webpage rendering for Opera GX and Chromium browsers.",
+  "scripts": {
+    "test": "node tests/color.test.js && node tests/detection.test.js && node tests/manifest.test.js",
+    "check": "node --check background.js && node --check lib/color.js && node --check lib/detection.js && node --check content/engine.js && node --check popup/popup.js && node --check options/options.js"
+  },
+  "license": "MIT"
+}

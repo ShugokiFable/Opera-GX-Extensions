@@ -1,0 +1,65 @@
+[
+  {
+    "id": 2001,
+    "priority": 10000,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://(?:10\\.|192\\.168\\.|172\\.(?:1[6-9]|2[0-9]|3[01])\\.)",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "image",
+        "xmlhttprequest",
+        "websocket",
+        "media",
+        "object",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 2002,
+    "priority": 9000,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://(?:127\\.|169\\.254\\.|0\\.)",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "image",
+        "xmlhttprequest",
+        "websocket",
+        "media",
+        "object",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 2003,
+    "priority": 9000,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "regexFilter": "^https?://\\[(?:::1|f[cd][0-9a-f]{2}:|fe[89ab][0-9a-f]:)",
+      "domainType": "thirdParty",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "image",
+        "xmlhttprequest",
+        "websocket",
+        "media",
+        "object",
+        "other"
+      ]
+    }
+  }
+]
