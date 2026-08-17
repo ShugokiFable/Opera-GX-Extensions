@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PopShield GX Settings</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { background: #0b0910; color: #f2eef8; font: 14px/1.55 Inter, "Segoe UI", system-ui, sans-serif; margin: 0 auto; max-width: 780px; padding: 28px 20px 60px; }
+    h1 { font-size: 22px; letter-spacing: -.02em; margin: 0; }
+    header p { color: #8d84a0; margin: 4px 0 0; font-size: 12px; }
+    .panel { background: #13101b; border: 1px solid #241d30; border-radius: 16px; margin-top: 20px; padding: 20px; }
+    .panel h2 { font-size: 15px; margin: 0 0 4px; }
+    .panel > p { color: #8d84a0; font-size: 12px; margin: 0 0 14px; }
+    .row { align-items: center; border-top: 1px solid #1d1727; display: flex; gap: 14px; justify-content: space-between; padding: 12px 0; }
+    .row:first-of-type { border-top: 0; }
+    .row small { color: #8d84a0; display: block; font-size: 11px; }
+    input[type=checkbox] { accent-color: #ff3158; height: 17px; width: 17px; }
+    input[type=range] { accent-color: #ff3158; width: 190px; }
+    output { color: #ffb0c0; font-size: 12px; font-weight: 700; min-width: 82px; text-align: right; }
+    textarea { background: #0b0910; border: 1px solid #33283f; border-radius: 10px; color: #f2eef8; font: 12px ui-monospace, Consolas, monospace; padding: 10px; resize: vertical; width: 100%; }
+    button { background: #1d1728; border: 1px solid #33283f; border-radius: 10px; color: #f2eef8; cursor: pointer; font: inherit; font-weight: 650; margin-top: 10px; padding: 9px 16px; }
+    button:hover { border-color: #ff3158; }
+    .grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+    .tile { background: #191322; border-radius: 12px; padding: 12px; }
+    .tile b { display: block; font-size: 20px; }
+    .tile span { color: #8d84a0; font-size: 10px; text-transform: uppercase; }
+    .note { color: #8d84a0; font-size: 11px; margin-top: 14px; }
+    #toast { background: #ff3158; border-radius: 9px; bottom: 18px; color: #fff; font-size: 12px; opacity: 0; padding: 9px 14px; position: fixed; right: 18px; transition: opacity .2s; }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PopShield GX</h1>
+    <p>Everything below stays on this machine. The extension makes no network requests of its own.</p>
+  </header>
+
+  <section class="panel">
+    <h2>Engine</h2>
+    <p>Behaviour, not a blocklist, is what separates a popunder from a window you asked for.</p>
+    <div class="row"><span><strong>Shield enabled</strong><small>Master switch</small></span><input data-setting="enabled" type="checkbox"></div>
+    <div class="row"><span><strong>Require a real click</strong><small>Reject windows opened without a trusted user gesture</small></span><input data-setting="requireGesture" type="checkbox"></div>
+    <div class="row"><span><strong>Block blank shells</strong><small>Refuse about:blank windows that are navigated later by script</small></span><input data-setting="blockAboutBlank" type="checkbox"></div>
+    <div class="row"><span><strong>Gesture window</strong><small>How soon after a click a window still counts as requested</small></span><output data-output="gestureWindowMs"></output><input data-setting="gestureWindowMs" type="range" min="200" max="5000" step="100"></div>
+    <div class="row"><span><strong>Windows per click</strong><small>Honest pages need one</small></span><output data-output="opensPerGesture"></output><input data-setting="opensPerGesture" type="range" min="1" max="5" step="1"></div>
+    <div class="row"><span><strong>Windows per minute</strong><small>Hard ceiling regardless of clicking</small></span><output data-output="maxOpensPerMinute"></output><input data-setting="maxOpensPerMinute" type="range" min="1" max="30" step="1"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Network blocklist</h2>
+    <p>A short seed list of long-running popunder ad networks. It is the backup layer and will never be complete, which is why it can be switched off independently.</p>
+    <div class="row"><span><strong>Block known popup networks</strong><small>Static declarativeNetRequest ruleset</small></span><input data-setting="networkRules" type="checkbox"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Allowed sites</h2>
+    <p>One host per line. These sites bypass every rule above — use it for a bank or a webmail client that legitimately opens windows.</p>
+    <textarea id="allowlist" rows="6" spellcheck="false" placeholder="mail.example.com&#10;bank.example.org"></textarea>
+    <button id="saveAllowlist">Save allowed sites</button>
+  </section>
+
+  <section class="panel">
+    <h2>Counters</h2>
+    <p>Local counts only. Nothing is transmitted.</p>
+    <div class="grid">
+      <div class="tile"><b id="blocked">0</b><span>windows blocked</span></div>
+      <div class="tile"><b id="overlays">0</b><span>overlays removed</span></div>
+      <div class="tile"><b id="lastBlock">—</b><span>last block</span></div>
+    </div>
+    <div id="reasons" class="note"></div>
+    <button id="resetStats">Reset counters</button>
+  </section>
+
+  <section class="panel">
+    <h2>What this cannot do</h2>
+    <p>A popup opened by the browser itself, a new tab from a middle-click, or a window created before PopShield's script runs in a frame are outside its reach. It also does not block ads in general — that is a different job, and Aegis GX Sentinel does it.</p>
+  </section>
+
+  <div id="toast" role="status"></div>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvnpHTg9NTHC17n7lInI9Jmptz8tpmQUp/MItpXEHGBWH7YEc7tYsN0V/HzJ9w/aCsC2LIwhiRHnkHTmpS9kq2Pu/+sWY3DauOqmD21VnIbRKUxaIDHk6ucYYayq7Rg5cCY3CMm2lHmSJ9A62NhDHubZbafSYlEYllkbmLFr31sRDM5qqaVz0nQNUVB2ZByqnI/9MJtsiE2tSqoGPD75qAMpvwwr+K+vUKqa3PvzC5v0C2hFHAikZQP3f4C1HAW1SPlPD39x9D2ihhEoWyxXS8wjoSvlCFkbbJwasf4T0LjJXWNZGVGdfCpq/mVcWjCcf13j5qxZsf75tSxAKKBoH0wIDAQAB",
+  "name": "PopShield GX",
+  "short_name": "PopShield",
+  "version": "1.0.0",
+  "description": "Local-only popup, popunder, click-hijack and interstitial blocker for Opera GX and Chromium. No telemetry, no remote config, no accounts.",
+  "minimum_chrome_version": "111",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_title": "PopShield GX",
+    "default_popup": "ui/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "ui/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/policy.js", "src/hook.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/guard.js"],
+      "css": ["src/guard.css"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "popup_networks",
+        "enabled": true,
+        "path": "rules/popup_networks.json"
+      }
+    ]
+  },
+  "commands": {
+    "kill-overlay": {
+      "suggested_key": { "default": "Alt+Shift+X" },
+      "description": "Remove blocking overlays on this page"
+    }
+  }
+}

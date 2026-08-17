@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PopShield GX</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { background: #0d0b12; color: #f2eef8; font: 13px/1.4 Inter, "Segoe UI", system-ui, sans-serif; margin: 0; width: 300px; }
+    header { align-items: center; border-bottom: 1px solid #241d30; display: flex; gap: 10px; padding: 14px; }
+    header h1 { font-size: 14px; letter-spacing: -.02em; margin: 0; }
+    header p { color: #8d84a0; font-size: 10px; margin: 2px 0 0; }
+    .mark { background: linear-gradient(140deg, #ff3158, #8d4dff); border-radius: 9px; height: 30px; width: 30px; }
+    .switch { margin-left: auto; }
+    .switch input { accent-color: #ff3158; height: 18px; width: 18px; }
+    .stats { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; padding: 14px; }
+    .stat { background: #15111d; border-radius: 10px; padding: 10px; }
+    .stat b { display: block; font-size: 19px; }
+    .stat span { color: #8d84a0; font-size: 9px; text-transform: uppercase; }
+    .rows { border-top: 1px solid #241d30; padding: 6px 14px 12px; }
+    .row { align-items: center; display: flex; gap: 10px; justify-content: space-between; padding: 9px 0; }
+    .row small { color: #8d84a0; display: block; font-size: 10px; }
+    .row input { accent-color: #ff3158; }
+    button { background: #1d1728; border: 1px solid #33283f; border-radius: 9px; color: #f2eef8; cursor: pointer; font: inherit; font-weight: 600; padding: 9px; width: 100%; }
+    button:hover { border-color: #ff3158; }
+    .actions { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; padding: 0 14px 14px; }
+    #status { color: #8d84a0; font-size: 10px; margin: 0; padding: 0 14px 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="mark"></div>
+    <div><h1>PopShield GX</h1><p>Local only. No telemetry.</p></div>
+    <label class="switch"><input id="enabled" type="checkbox"></label>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><b id="tabBlocked">0</b><span>this page</span></div>
+    <div class="stat"><b id="totalBlocked">0</b><span>total blocked</span></div>
+  </section>
+
+  <section class="rows">
+    <label class="row">
+      <span><strong>Allow popups here</strong><small id="siteHost">—</small></span>
+      <input id="siteAllowed" type="checkbox">
+    </label>
+    <label class="row">
+      <span><strong>Ad-network blocklist</strong><small>Backup filter layer</small></span>
+      <input data-setting="networkRules" type="checkbox">
+    </label>
+  </section>
+
+  <section class="actions">
+    <button id="kill">Kill overlay</button>
+    <button id="options">Settings</button>
+  </section>
+
+  <p id="status">Ready.</p>
+  <script src="popup.js"></script>
+</body>
+</html>
