@@ -7,9 +7,13 @@ _Deploy/keys/
 # top level; these mirrors are kept locally for reference only.
 zSources/
 
+# Superseded by Release/ - old one-off release artifacts, git bundles and
+# duplicate .crx files from before the build pipeline existed.
+OLEDForgeGX-v1.0.1-GitHub-Release/
+PrismShot-GX-v1.0.0-GitHub-Release/
+
 node_modules/
 dist/
-release/
 *.log
 Thumbs.db
 desktop.ini
