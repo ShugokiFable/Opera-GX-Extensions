@@ -1,16 +1,11 @@
 # Extension signing keys. Anyone holding one can sign a package the browser
 # accepts as a legitimate update to your extension. Never publish these.
-_Deploy/keys/
+tools/keys/
 *.pem
 
-# Legacy duplicate source trees. Every extension now has exactly one copy at the
-# top level; these mirrors are kept locally for reference only.
-zSources/
-
-# Superseded by Release/ - old one-off release artifacts, git bundles and
-# duplicate .crx files from before the build pipeline existed.
-OLEDForgeGX-v1.0.1-GitHub-Release/
-PrismShot-GX-v1.0.0-GitHub-Release/
+# Superseded duplicate trees and one-off release artifacts, kept on disk for
+# reference only. Everything they held now lives in extensions/ or Release/.
+_archive/
 
 node_modules/
 dist/

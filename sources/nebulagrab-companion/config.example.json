@@ -1,0 +1,14 @@
+{
+  "output_dir": "C:/Users/your-name/Downloads/NebulaGrab",
+  "cache_dir": "C:/Users/your-name/.nebulagrab-cache",
+  "direct_workers": 6,
+  "chunk_size_mb": 16,
+  "direct_retries": 12,
+  "stream_retries": 30,
+  "concurrent_fragments": 8,
+  "job_restarts": 3,
+  "fsync_interval_mb": 64,
+  "impersonate_generic": true,
+  "keep_failed_cache": true,
+  "captured_fragment_limit": 10000
+}

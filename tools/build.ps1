@@ -18,12 +18,11 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $ToolsDir    = $PSScriptRoot
-$DeployDir   = Split-Path $ToolsDir -Parent
-$SourceRoot  = Split-Path $DeployDir -Parent
-$KeyDir      = Join-Path $DeployDir 'keys'
+$SourceRoot  = Split-Path $ToolsDir -Parent
+$ExtensionDir = Join-Path $SourceRoot 'extensions'
+$KeyDir      = Join-Path $ToolsDir 'keys'
 $ReleaseDir  = Join-Path $SourceRoot 'Release'
 $StageRoot   = Join-Path $env:TEMP ('gx-build-' + [guid]::NewGuid().ToString('N').Substring(0, 8))
-$SkipNames   = @('_Deploy', 'zSources', 'Release', 'node_modules')
 
 function Write-Head([string]$text) {
   Write-Host ''
@@ -97,7 +96,7 @@ function Get-InstalledIndex {
 }
 
 Write-Head 'GX Extension Builder'
-Write-Host "  source  : $SourceRoot"
+Write-Host "  source  : $ExtensionDir"
 Write-Host "  output  : $ReleaseDir"
 
 $installed = Get-InstalledIndex
@@ -105,8 +104,7 @@ $built = New-Object System.Collections.Generic.List[object]
 $notes = New-Object System.Collections.Generic.List[string]
 
 Write-Head 'Building'
-foreach ($dir in (Get-ChildItem $SourceRoot -Directory)) {
-  if ($SkipNames -contains $dir.Name) { continue }
+foreach ($dir in (Get-ChildItem $ExtensionDir -Directory)) {
   $manifestPath = Join-Path $dir.FullName 'manifest.json'
   if (-not (Test-Path $manifestPath)) { continue }
 

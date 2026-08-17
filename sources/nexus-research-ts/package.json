@@ -1,0 +1,22 @@
+{
+  "name": "nexus-research-extension",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "node -e \"fs.rmSync('dist',{recursive:true,force:true});fs.rmSync('release',{recursive:true,force:true})\"",
+    "typecheck": "tsc --noEmit",
+    "build": "node build.mjs",
+    "package": "npm run clean && npm run typecheck && npm run build && node package.mjs"
+  },
+  "dependencies": {
+    "dompurify": "^3.2.7",
+    "marked": "^15.0.12"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "@types/dompurify": "^3.2.0",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}
