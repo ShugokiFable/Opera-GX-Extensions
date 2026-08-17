@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.3.1
+
+Fixed
+- Saving settings failed with `Duplicate script ID 'aegis-isolated'`.
+  `chrome.scripting.unregisterContentScripts` is atomic: passing it the full
+  list of guard ids when only some of them are registered made it reject the
+  whole call and remove nothing, so the register that followed collided with
+  the guard that was still in place. Aegis now asks the browser which scripts
+  it actually holds and unregisters only those. This is why the error appeared
+  on the second save rather than the first.
+- Two saves in quick succession could race to claim the same script ids.
+  Guard registration is now serialised.
+
+Notes
+- The test mock for `chrome.scripting` always resolved, so it could not have
+  caught this. It now reproduces the browser's real contract - both calls
+  validate every id up front and reject the whole batch, changing nothing, if
+  one id is wrong - and fails against the pre-fix code with the exact error
+  above.
+- All four bundled test suites (validate, self_test, api_contract, adshield)
+  pass.
+
 ## 1.3.0
 
 Added

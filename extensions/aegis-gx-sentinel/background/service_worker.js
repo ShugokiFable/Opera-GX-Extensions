@@ -918,9 +918,25 @@ async function applyPrivacySettings(config) {
   await Promise.allSettled(tasks);
 }
 
-async function registerContentGuards(config) {
-  const ids = ["aegis-isolated", "aegis-gpc", "aegis-popup", "aegis-fingerprint", "aegis-youtube-adshield"];
-  try { await chrome.scripting.unregisterContentScripts({ ids }); } catch { /* no existing registration */ }
+let guardQueue = Promise.resolve();
+
+// Two saves in flight would each read the same "already registered" set and
+// then both try to claim the same ids, so registration is serialised.
+function registerContentGuards(config) {
+  const run = guardQueue.then(() => applyContentGuards(config));
+  guardQueue = run.catch(() => {});
+  return run;
+}
+
+async function applyContentGuards(config) {
+  // unregisterContentScripts is atomic: a single id that is not currently
+  // registered rejects the whole call and removes nothing, which then leaves
+  // registerContentScripts to fail with "Duplicate script ID". Only ever pass
+  // ids the browser says it actually holds.
+  let existing = [];
+  try { existing = await chrome.scripting.getRegisteredContentScripts(); } catch { existing = []; }
+  const stale = existing.map(script => script.id).filter(id => id.startsWith("aegis-"));
+  if (stale.length) await chrome.scripting.unregisterContentScripts({ ids: stale });
   if (!config.enabled && !config.adblock?.enabled) return;
   const scripts = [{
     id: "aegis-isolated",

@@ -9,6 +9,10 @@ const workerPath = path.join(root, "background/service_worker.js");
 const source = fs.readFileSync(workerPath, "utf8").split("chrome.runtime.onInstalled")[0];
 const calls = [];
 const sessionStore = {};
+// Mirrors chrome.scripting's real contract: both calls validate every id up
+// front and reject the whole batch, changing nothing, if one id is wrong. A
+// mock that always resolves hides the exact bug this file exists to catch.
+const registered = new Map();
 const chrome = {
   declarativeNetRequest: {
     updateEnabledRulesets: async args => calls.push({ type: "rulesets", args }),
@@ -18,8 +22,17 @@ const chrome = {
     updateSessionRules: async args => calls.push({ type: "session", args })
   },
   scripting: {
-    unregisterContentScripts: async args => calls.push({ type: "unregister", args }),
-    registerContentScripts: async args => calls.push({ type: "register", args })
+    getRegisteredContentScripts: async () => [...registered.values()],
+    unregisterContentScripts: async args => {
+      calls.push({ type: "unregister", args });
+      for (const id of args.ids) if (!registered.has(id)) throw new Error(`Nonexistent script ID '${id}'`);
+      for (const id of args.ids) registered.delete(id);
+    },
+    registerContentScripts: async args => {
+      calls.push({ type: "register", args });
+      for (const script of args) if (registered.has(script.id)) throw new Error(`Duplicate script ID '${script.id}'`);
+      for (const script of args) registered.set(script.id, script);
+    }
   },
   storage: {
     session: {
@@ -67,6 +80,26 @@ const youtubeScript = call?.args?.find(script => script.id === "aegis-youtube-ad
 if (!youtubeScript || youtubeScript.world !== "ISOLATED" || youtubeScript.runAt !== "document_start") {
   throw new Error("Adaptive YouTube script registration contract failed");
 }
+
+// Re-saving is the ordinary case, and only some guards are ever registered at
+// once. Passing the full id list to unregisterContentScripts removes nothing,
+// so the next register collides: "Duplicate script ID 'aegis-isolated'".
+calls.length = 0;
+await vm.runInContext("registerContentGuards(__config)", context);
+if (!registered.has("aegis-isolated")) throw new Error("Re-saving settings dropped the isolated guard");
+
+config.enabled = false;
+config.adblock.enabled = false;
+await vm.runInContext("registerContentGuards(__config)", context);
+if (registered.size) throw new Error("Turning the shield off left content scripts registered");
+
+config.enabled = true;
+config.adblock.enabled = true;
+await Promise.all([
+  vm.runInContext("registerContentGuards(__config)", context),
+  vm.runInContext("registerContentGuards(__config)", context)
+]);
+if (!registered.has("aegis-isolated")) throw new Error("Overlapping saves lost the isolated guard");
 
 calls.length = 0;
 await vm.runInContext("setYoutubeTabBypass(42, true)", context);
