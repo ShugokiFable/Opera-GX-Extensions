@@ -40,9 +40,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          registry-url: https://registry.npmjs.org
       - name: Install, build, typecheck
         run: |
-          npm ci
+          # Lockfile was generated against a private npm mirror; rewrite so runners can fetch.
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("package-lock.json")
+          t = p.read_text(encoding="utf-8")
+          old = "https://packages.applied-caas-gateway1.internal.api.openai.org/artifactory/api/npm/npm-public/"
+          t2 = t.replace(old, "https://registry.npmjs.org/")
+          if t2 != t:
+              p.write_text(t2, encoding="utf-8")
+              print("rewrote package-lock.json resolved URLs to registry.npmjs.org")
+          else:
+              print("package-lock.json already uses a public registry")
+          PY
+          npm ci --registry https://registry.npmjs.org/
           npm run build --if-present
           if [ -x node_modules/.bin/tsc ]; then
             node_modules/.bin/tsc --noEmit
