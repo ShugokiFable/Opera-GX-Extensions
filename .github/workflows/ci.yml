@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  js-syntax:
+    name: JavaScript syntax check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: node --check every .js file
+        run: |
+          find extensions sources tools -name '*.js' -not -path '*/node_modules/*' -print0 \
+            | xargs -0 -n 1 node --check
+
+  nexus-research-ts:
+    name: nexus-research-ts build + typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: sources/nexus-research-ts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install, build, typecheck
+        run: |
+          npm ci
+          npm run build --if-present
+          if [ -x node_modules/.bin/tsc ]; then
+            node_modules/.bin/tsc --noEmit
+          else
+            echo "typescript not a dependency; skipping tsc --noEmit"
+          fi
