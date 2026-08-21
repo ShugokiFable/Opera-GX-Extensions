@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.3
+
+Fixed
+- The "password over an unencrypted HTTP connection" warning no longer fires on
+  trusted sites or loopback addresses (localhost / 127.0.0.1 / *.localhost).
+  Loopback traffic never leaves the machine, and a trusted site is the user's
+  accepted risk. Every other HTTP host still warns.
+
 ## 1.3.2
 
 Fixed

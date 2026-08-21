@@ -3,7 +3,7 @@
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4HdM2DPF2oiZqZxEdWikAnsMezXcU1DRqzx3shCaJLzlSUefq+M9KWYfucZo5VIQ2VktZ09EhSnXu2zC3MRoxbzrW4kkPyk1VpbtVJOdwCvRhngExrk20EoUmlu5JLQdPg6sfe6eHSt7N1R1Jv3NId/OjryuB4r+maHxyl59JMBK+2HbFHsA6tgZDdpEV6d6NAMfSvdbfO6NPE26cfgLh7kNR43tZT1fko0qyN2Ktv35sBlPyVIfaCtAKsBL+4L5daA5PPquO53TCjrs3btv/jAn50fxzDyy+1aQNeOek41gJTSL2WheSUJlVCZ9irYikGtKVnG0Ng3Dvg92MT5+lQIDAQAB",
   "name": "Aegis GX Sentinel",
   "short_name": "Aegis GX",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "version_name": "1.3.1 Stealth Ad Shield + YouTube Module",
   "description": "Local-first privacy, stealth ad and tracker blocking, phishing, malware, scam, secure relay, leak protection, and dangerous-download defense for Chromium and Opera GX.",
   "minimum_chrome_version": "121",

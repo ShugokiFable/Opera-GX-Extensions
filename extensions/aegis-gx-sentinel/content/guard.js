@@ -106,6 +106,9 @@
 
   function inspectForms(root = document) {
     if (!config?.enabled || location.protocol === "https:") return;
+    const host = normalizedHost();
+    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".localhost")) return; // loopback: traffic never leaves the machine
+    if ((config.allowlist || []).some(d => domainMatches(host, String(d).toLowerCase()))) return; // trusted site: user accepted the risk
     const password = root.querySelector?.("input[type='password']");
     if (!password || document.getElementById("aegis-http-warning")) return;
     const banner = document.createElement("div");
