@@ -71,4 +71,20 @@ assert.equal(verdict.allow, true, 'disabled shield allows everything');
 assert.equal(policy.isAllowlisted('deep.sub.example.com', ['*.example.com']), true, 'wildcard prefix is tolerated');
 assert.equal(policy.isAllowlisted('notexample.com', ['example.com']), false, 'suffix match must respect the dot boundary');
 
+// OAuth targets pass every heuristic: no gesture, blank shell, rate limit.
+state = policy.createState();
+verdict = policy.evaluateOpen(state, config, { now, pageUrl: page, targetUrl: 'https://accounts.google.com/o/oauth2/auth?client_id=x' });
+assert.equal(verdict.allow, true, 'google oauth popup passes without gesture');
+verdict = policy.evaluateOpen(state, config, { now, pageUrl: page, targetUrl: 'about:blank' });
+// blank target itself is not an auth host; the site then navigates the popup.
+// That flow is covered by Aegis's guard; PopShield keeps blocking raw blanks
+// whose final URL is unknown at open time.
+assert.equal(verdict.allow, false);
+
+verdict = policy.evaluateOpen(state, config, { now, pageUrl: page, targetUrl: 'https://evil.accounts.google.com.example.net/' });
+assert.equal(verdict.allow, false, 'auth-host suffix must respect the dot boundary');
+verdict = policy.evaluateOpen(state, { ...config }, { now, pageUrl: page, targetUrl: 'https://github.com/login/oauth/authorize' });
+assert.equal(verdict.allow, true, 'github oauth passes');
+assert.equal(policy.isAuthHost('notaccounts.google.com'), false, 'dot boundary on isAuthHost');
+
 console.log('PopShield policy test: PASS');

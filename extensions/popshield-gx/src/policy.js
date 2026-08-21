@@ -38,6 +38,21 @@
     });
   }
 
+  // OAuth sign-in popups open after async token round-trips (transient user
+  // activation long gone) and often start as about:blank then navigate. Real
+  // popunders never target auth providers, so these pass every heuristic.
+  const AUTH_HOSTS = Object.freeze([
+    'accounts.google.com', 'login.microsoftonline.com', 'login.live.com',
+    'appleid.apple.com', 'github.com', 'facebook.com', 'x.com', 'twitter.com',
+    'accounts.spotify.com', 'discord.com', 'steamcommunity.com', 'vk.com',
+    'login.yahoo.com', 'bitbucket.org', 'gitlab.com'
+  ]);
+
+  function isAuthHost(value) {
+    const host = normalizeHost(value);
+    return Boolean(host) && AUTH_HOSTS.some((entry) => host === entry || host.endsWith(`.${entry}`));
+  }
+
   function createState() {
     return { lastGestureAt: 0, opensThisGesture: 0, recentOpens: [], blocked: 0, allowed: 0 };
   }
@@ -59,6 +74,7 @@
 
     if (!settings.enabled) return { allow: true, reason: 'disabled' };
     if (isAllowlisted(pageHost, settings.allowlist)) return { allow: true, reason: 'site-allowlisted' };
+    if (isAuthHost(context?.targetUrl)) return { allow: true, reason: 'auth-provider' };
 
     // about:blank and empty targets are the classic popunder shell: open a blank
     // window, then navigate it from script so no URL is ever visible to a filter.
@@ -96,7 +112,7 @@
     state.allowed += 1;
   }
 
-  scope.PopShieldPolicy = { DEFAULTS, normalizeHost, isAllowlisted, createState, noteGesture, evaluateOpen, recordOpen };
+  scope.PopShieldPolicy = { DEFAULTS, normalizeHost, isAllowlisted, isAuthHost, createState, noteGesture, evaluateOpen, recordOpen };
 })(typeof globalThis !== 'undefined' ? globalThis : self);
 
 if (typeof module !== 'undefined' && module.exports) module.exports = globalThis.PopShieldPolicy;

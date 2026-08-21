@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.4
+
+Fixed
+- "Sign in with Google" (and other OAuth providers) no longer dead-ends. The
+  popup guard used to return `null` for any open that happened after an async
+  wait - exactly when auth popups fire, once the transient user activation has
+  expired. Targets pointing at known auth providers now always pass through.
+- Same-origin opens without fresh activation are handed to the browser's own
+  popup blocker (visible infobar with a per-site override) instead of silently
+  returning `null`, which some sites caught and treated as failure - the
+  suspected cause of softlocks on script-heavy sites. Cross-origin targets
+  still get the hard block; that is where popunders live.
+
 ## 1.3.3
 
 Fixed

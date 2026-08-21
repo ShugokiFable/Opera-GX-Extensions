@@ -1,5 +1,15 @@
 ﻿# Changelog
 
+## 1.0.2
+
+Fixed
+- "Sign in with Google" (and other OAuth providers) no longer gets caught by
+  the heuristics. Auth popups open after async token round-trips - outside the
+  one-second gesture window, sometimes as a blank shell that is navigated
+  later. Targets pointing at known auth providers now always pass through.
+  The dot boundary is enforced: `evil.accounts.google.com.example.net` does
+  not match `accounts.google.com`.
+
 ## 1.0.1
 
 Fixed
