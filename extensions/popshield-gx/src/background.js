@@ -59,6 +59,29 @@ async function applyRulesets(settings) {
   } catch {
     // Ruleset already in the requested state.
   }
+  // Per-site allows must reach the network layer too, or "allow popups on
+  // this site" only un-blocks the behavioural engine and the blocklist keeps
+  // killing the site's popunder scripts. One allow rule for the whole
+  // allowlist; static block rules are priority 1, so 2 billion wins.
+  // ponytail: single rule, initiatorDomains caps at 500 entries — plenty for a
+  // popup allowlist; batch into multiple rules if someone ever exceeds that.
+  const allowRule = {
+    id: 1,
+    priority: 2_147_483_647,
+    action: { type: 'allow' },
+    condition: {
+      initiatorDomains: settings.allowlist,
+      resourceTypes: ['image', 'other', 'ping', 'script', 'sub_frame', 'xmlhttprequest']
+    }
+  };
+  try {
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [allowRule.id],
+      addRules: settings.allowlist.length ? [allowRule] : []
+    });
+  } catch (error) {
+    console.error('PopShield: allowlist rule sync failed', error);
+  }
 }
 
 function updateStats(patch) {

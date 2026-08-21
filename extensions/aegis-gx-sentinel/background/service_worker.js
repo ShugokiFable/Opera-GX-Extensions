@@ -458,18 +458,26 @@ async function loadRelayCredential(endpointId, username, password) {
 }
 
 async function applyPermissionFirewall(config) {
+  // Trusted sites keep scripted downloads working despite the global block.
+  const allowPatterns = (config.allowlist || [])
+    .map(normalizeDomain).filter(Boolean)
+    .flatMap(entry => [`https://*.${entry}/*`, `https://${entry}/*`]);
   const entries = [
-    [chrome.contentSettings?.notifications, config.privacy.blockNotifications],
-    [chrome.contentSettings?.location, config.privacy.blockGeolocation],
-    [chrome.contentSettings?.camera, config.privacy.blockCamera],
-    [chrome.contentSettings?.microphone, config.privacy.blockMicrophone],
-    [chrome.contentSettings?.automaticDownloads, config.privacy.blockAutomaticDownloads]
+    [chrome.contentSettings?.notifications, config.privacy.blockNotifications, []],
+    [chrome.contentSettings?.location, config.privacy.blockGeolocation, []],
+    [chrome.contentSettings?.camera, config.privacy.blockCamera, []],
+    [chrome.contentSettings?.microphone, config.privacy.blockMicrophone, []],
+    [chrome.contentSettings?.automaticDownloads, config.privacy.blockAutomaticDownloads, allowPatterns]
   ];
-  await Promise.allSettled(entries.map(async ([setting, shouldBlock]) => {
+  await Promise.allSettled(entries.map(async ([setting, shouldBlock, patterns]) => {
     if (!setting) return;
     await setting.clear({ scope: "regular" });
     if (config.enabled && shouldBlock) {
       await setting.set({ primaryPattern: "<all_urls>", setting: "block", scope: "regular" });
+      for (const pattern of patterns) {
+        try { await setting.set({ primaryPattern: pattern, setting: "allow", scope: "regular" }); }
+        catch { /* pattern rejected on this Chromium */ }
+      }
     }
   }));
 }
@@ -550,6 +558,37 @@ function normalizeDomain(input) {
   if (value.length > 253 || !value.includes(".")) return "";
   if (!/^[a-z0-9.-]+$/.test(value) || value.includes("..") || value.startsWith("-") || value.endsWith("-")) return "";
   return value;
+}
+
+// Single matcher every trusted-site check routes through. An allowlist entry
+// covers the domain and all its subdomains.
+function isAllowlistedHost(config, hostname) {
+  const host = String(hostname || "").toLowerCase();
+  if (!host) return false;
+  return (config.allowlist || []).some(item => {
+    const entry = normalizeDomain(item);
+    return Boolean(entry) && (host === entry || host.endsWith(`.${entry}`));
+  });
+}
+
+// Downloads initiated by trusted pages (incl. blob: URLs, which is how
+// ChatGPT hands out generated files) are the user's business.
+function hostOfDownloadUrl(raw) {
+  if (typeof raw !== "string") return "";
+  const value = raw.startsWith("blob:") ? raw.slice(5) : raw;
+  try { return new URL(value).hostname; } catch { return ""; }
+}
+
+async function allowlistedDownloadHost(downloadId) {
+  try {
+    const [item] = await chrome.downloads.search({ id: downloadId });
+    if (!item) return "";
+    for (const url of [item.referrer, item.finalUrl, item.url]) {
+      const host = hostOfDownloadUrl(url);
+      if (host) return host;
+    }
+  } catch { /* download already gone */ }
+  return "";
 }
 
 function parseFeed(text) {
@@ -956,15 +995,22 @@ async function applyContentGuards(config) {
     world: "MAIN",
     persistAcrossSessions: true
   });
-  if (config.enabled && config.privacy.popupGuard) scripts.push({
-    id: "aegis-popup",
-    matches: ["http://*/*", "https://*/*"],
-    js: ["content/popup_guard.js"],
-    allFrames: true,
-    runAt: "document_start",
-    world: "MAIN",
-    persistAcrossSessions: true
-  });
+  if (config.enabled && config.privacy.popupGuard) {
+    const popupScript = {
+      id: "aegis-popup",
+      matches: ["http://*/*", "https://*/*"],
+      js: ["content/popup_guard.js"],
+      allFrames: true,
+      runAt: "document_start",
+      world: "MAIN",
+      persistAcrossSessions: true
+    };
+    // Trusted sites are exempt: window.open stays stock there.
+    const excluded = (config.allowlist || []).map(normalizeDomain).filter(Boolean)
+      .flatMap(entry => [`https://*.${entry}/*`, `https://${entry}/*`, `http://*.${entry}/*`, `http://${entry}/*`]);
+    if (excluded.length) popupScript.excludeMatches = excluded;
+    scripts.push(popupScript);
+  }
   if (config.enabled && config.profile === "lockdown") scripts.push({
     id: "aegis-fingerprint",
     matches: ["http://*/*", "https://*/*"],
@@ -1289,6 +1335,8 @@ chrome.downloads.onChanged.addListener(async delta => {
   if (!config.enabled) return;
   const danger = delta.danger.current;
   if (DANGEROUS_DOWNLOAD_TYPES.has(danger) && config.security.dangerousDownloadAction === "cancel") {
+    const originHost = await allowlistedDownloadHost(delta.id);
+    if (isAllowlistedHost(config, originHost)) return; // trusted site: user's call
     try { await chrome.downloads.cancel(delta.id); } catch { /* already stopped */ }
     config.stats.dangerousDownloadsStopped += 1;
     await saveConfig(config);

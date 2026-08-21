@@ -1,17 +1,15 @@
 ﻿# Changelog
 
-## 1.0.0
+## 1.0.1
 
-Initial release.
-
-- Behavioural popup and popunder engine: trusted-gesture requirement, one window
-  per click, per-minute ceiling, blank-shell refusal, cross-site heuristic.
-- `window.open` wrapper installed at document_start in the page world, returning
-  an inert stub so popunder scripts do not fall back to another technique.
-- Automatic `rel="noopener"` repair on `target="_blank"` links that omit it.
-- Geometry-based overlay and interstitial removal with scroll-lock release,
-  available from the popup, the page context menu, and Alt+Shift+X.
-- Seed declarativeNetRequest blocklist for long-running popunder networks,
-  switchable independently of the behavioural engine.
-- Per-site allowlist, per-tab block badge, local counters broken down by reason.
-- No network requests of any kind.
+Fixed
+- "Allow popups on this site" now reaches the network blocklist layer. The
+  per-site allowlist previously only disabled the behavioural `window.open`
+  engine; the DNR blocklist (popads, popcash, exoclick, adsterra, ...) kept
+  killing the site's popup scripts regardless. One dynamic `allow` rule
+  (priority 2147483647, `initiatorDomains` = allowlist) is now synced from
+  `applyRulesets` whenever settings or the allowlist change.
+- Removed the UTF-8 BOM from `rules/popup_networks.json`. The file began with
+  `EF BB BF`, which is not JSON whitespace; whether Chromium's DNR ruleset
+  parser tolerates it is unverified, so the 12 network rules are now shipped
+  byte-clean instead.

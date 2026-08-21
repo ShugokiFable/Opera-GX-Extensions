@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.2
+
+Fixed
+- Trusted sites no longer get downloads blocked. Three subsystems ignored the
+  "Trust this site" allowlist entirely:
+  - the dangerous-download auto-cancel now looks up the download's origin
+    (referrer, then final URL, then URL - blob: URLs included, which is how
+    ChatGPT hands out generated files) and leaves allowlisted origins alone;
+  - the `automaticDownloads` content-setting block-all now writes per-site
+    `allow` patterns for every allowlisted domain, so scripted downloads from
+    trusted pages work despite the global clamp;
+  - the popup guard content script is no longer registered on allowlisted
+    sites (`excludeMatches`), so `window.open` stays stock there.
+  All three route through one shared `isAllowlistedHost` matcher.
+
 ## 1.3.1
 
 Fixed

@@ -13,9 +13,9 @@ Download the `.crx` for what you want from [Release](Release) and drag it onto
 | Extension | Version | What it does |
 | --- | --- | --- |
 | [GX Overdrive](extensions/gx-overdrive) | 1.2.0 | Performance governor: two-engine tab hibernation, long-chat folding for ChatGPT/Claude/Gemini/Perplexity, media throttling, download recovery |
-| [Aegis GX Sentinel](extensions/aegis-gx-sentinel) | 1.3.1 | Privacy and threat shield: stealth ad/tracker blocking, phishing and malware defence, leak protection, per-rule block log |
+| [Aegis GX Sentinel](extensions/aegis-gx-sentinel) | 1.3.2 | Privacy and threat shield: stealth ad/tracker blocking, phishing and malware defence, leak protection, per-rule block log |
 | [NebulaGrab](extensions/nebulagrab) | 1.3.1 | Media detector with resumable downloads, HLS/DASH fragment capture, Smart Fetch |
-| [PopShield GX](extensions/popshield-gx) | 1.0.0 | Popup, popunder, click-hijack and interstitial blocker — behavioural, not blocklist-driven |
+| [PopShield GX](extensions/popshield-gx) | 1.0.1 | Popup, popunder, click-hijack and interstitial blocker — behavioural, not blocklist-driven |
 | [Nocturne Scrollbars GX](extensions/nocturne-scrollbars-gx) | 1.1.0 | Dark modern scrollbars with presets, per-site profiles, adaptive contrast |
 | [NEXUS Research](extensions/nexus-research) | 1.0.1 | Deep web research through OpenRouter with page intelligence and citations |
 | [OLED Forge GX](extensions/oled-forge-gx) | 1.0.1 | True-black OLED treatment |
