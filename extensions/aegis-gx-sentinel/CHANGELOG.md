@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.5
+
+Fixed
+- `version_name` was still "1.3.1" through the 1.3.2, 1.3.3 and 1.3.4
+  releases, and `version_name` is what the browser shows in its extension
+  list - so a correctly updated 1.3.4 install reported itself as 1.3.1.
+  `tools/validate.mjs` has always checked this; nothing was running it.
+  Repository CI now runs every bundled test, validator and self-check, plus
+  `tools/check-versions.mjs`, so the next mismatch fails the build instead
+  of shipping.
+
 ## 1.3.4
 
 Fixed
