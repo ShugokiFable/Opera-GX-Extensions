@@ -63,3 +63,40 @@ jobs:
           else
             echo "typescript not a dependency; skipping tsc --noEmit"
           fi
+
+  tests:
+    name: Extension test suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Run every bundled test, validator and self-check
+        run: |
+          set -e
+          found=0
+          while IFS= read -r script; do
+            found=$((found + 1))
+            echo "::group::$script"
+            node "$script"
+            echo "::endgroup::"
+          done < <(find extensions -type f \
+              \( -path '*/tests/*' -o -name '*test*.mjs' -o -name '*selfcheck*.mjs' \
+                 -o -name 'validate.mjs' -o -name 'self_test.mjs' \) \
+              \( -name '*.mjs' -o -name '*.cjs' \) \
+              -not -path '*/node_modules/*' | sort)
+          echo "ran $found suites"
+          test "$found" -gt 0
+
+  version-sync:
+    name: Manifest versions match the README table
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node tools/check-versions.mjs

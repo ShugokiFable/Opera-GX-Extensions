@@ -63,8 +63,15 @@ const chrome = {
   },
   tabs: {
     async query(query) {
-      if (query?.active) return tabs.filter((tab) => tab.active);
-      return tabs;
+      let result = tabs;
+      if (query?.active) result = result.filter((tab) => tab.active);
+      // The real query applies these filters server-side. A mock that ignores
+      // them cannot catch a caller that relies on them to find work.
+      if (Array.isArray(query?.url)) result = result.filter((tab) => tab.url.startsWith('http'));
+      if (typeof query?.autoDiscardable === 'boolean') {
+        result = result.filter((tab) => (tab.autoDiscardable !== false) === query.autoDiscardable);
+      }
+      return result;
     },
     async sendMessage() { return { canDiscard: true }; },
     async update(id, props) {
@@ -163,11 +170,20 @@ function send(message) {
   await send({ type: 'GX_SAVE_SETTINGS', patch: { autoHibernate: false, memoryGovernor: false } });
   await governorTick();
   assert.deepEqual(discarded, [2], 'no tab hibernated while both engines are off');
+  assert.equal(tabs.find((tab) => tab.id === 4).autoDiscardable, false, 'open tabs opted out of native sleeping when hibernation was switched off');
+
+  // Regression: a tab opened AFTER hibernation was switched off must be opted
+  // out too. Caching the last synced value made the minute tick return early,
+  // so every tab opened later stayed browser-discardable and Opera slept it.
+  tabs.push({ id: 7, active: false, discarded: false, pinned: false, audible: false, url: 'https://opened-later.example/', lastAccessed: Date.now() });
+  await governorTick();
+  assert.equal(tabs.find((tab) => tab.id === 7).autoDiscardable, false, 'tab opened after the toggle is opted out on the next tick');
 
   // Regression: the emergency sweep must not fire again inside its cooldown.
   await send({ type: 'GX_SAVE_SETTINGS', patch: { memoryGovernor: true, emergencyDiscardBatch: 1 } });
   await governorTick();
   assert.deepEqual(discarded, [2, 4], 'pressure sweep hibernated one cold tab');
+  assert.notEqual(tabs.find((tab) => tab.id === 7).autoDiscardable, false, 're-enabling hibernation hands tabs back to the browser');
   tabs.push({ id: 5, active: false, discarded: false, pinned: false, audible: false, url: 'https://cold2.example/', lastAccessed: Date.now() - 10_000_000 });
   await governorTick();
   assert.deepEqual(discarded, [2, 4], 'cooldown blocked a second sweep one minute later');

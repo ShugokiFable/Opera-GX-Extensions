@@ -90,16 +90,16 @@ function nativeDiscardAllowed(settings) {
 
 async function syncBrowserDiscardability(settings) {
   const allowed = nativeDiscardAllowed(settings);
-  const governor = await getGovernorState();
-  if (governor.nativeDiscardSyncedTo === allowed) return;
-  // Query only the tabs that still need flipping; steady state costs one
-  // empty query per settings change, not one call per tab.
+  // The query filter does the work: it returns only tabs that are on the wrong
+  // setting, so steady state is one call that comes back empty. Caching the
+  // last synced value and skipping on a match was wrong - a tab opened after
+  // the flip defaults to browser-discardable, and catching those is the entire
+  // reason this runs on the minute tick.
   const needingFlip = await chrome.tabs.query({
     url: ['http://*/*', 'https://*/*'],
     autoDiscardable: !allowed
   }).catch(() => []);
   await Promise.allSettled(needingFlip.map((tab) => chrome.tabs.update(tab.id, { autoDiscardable: allowed })));
-  await setGovernorState({ nativeDiscardSyncedTo: allowed });
 }
 
 async function getSettings() {

@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.2.2
+
+Fixed
+- 1.2.1's opt-out never reached tabs opened after the toggle, so hibernation
+  still appeared to be on. The sync cached the last value it had applied and
+  returned early when it matched, which cancelled the whole point of running
+  it on the minute tick: a tab opened later starts browser-discardable, so the
+  state to repair is exactly the state the cache called "already correct".
+  The tab query already filters to tabs on the wrong setting, so the cache
+  bought nothing - it is gone, and steady state is one query that returns
+  empty.
+
+Notes
+- The smoke test's `tabs.query` mock ignored the `url` and
+  `autoDiscardable` filters and returned every tab, so it could not have
+  caught this. It now applies both, and fails against 1.2.1.
+- Whether `autoDiscardable: false` suppresses Opera GX's own tab sleeping is
+  not verified here - it is the documented Chromium contract, and Opera is a
+  Chromium fork, but that is inference, not evidence. If tabs still sleep with
+  all Overdrive hibernation off, the browser's own setting is the culprit:
+  check GX Control and `opera://settings` for tab sleeping / memory saver.
+  The dashboard's hibernation log tells the two apart - a tab that is asleep
+  but absent from that log was slept by the browser, not by Overdrive.
+
 ## 1.2.1
 
 Fixed
