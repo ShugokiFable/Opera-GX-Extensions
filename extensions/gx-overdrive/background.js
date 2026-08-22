@@ -80,6 +80,28 @@ function isWhitelisted(url, whitelist) {
   });
 }
 
+// True when Overdrive itself manages hibernation. When false, every web tab is
+// opted out of the BROWSER'S native memory-pressure discarding too (Opera tab
+// sleeping / Chromium memory saver ignore extension toggles but honour the
+// per-tab autoDiscardable flag), so "off" really means off.
+function nativeDiscardAllowed(settings) {
+  return Boolean(settings.enabled && (settings.autoHibernate || settings.memoryGovernor));
+}
+
+async function syncBrowserDiscardability(settings) {
+  const allowed = nativeDiscardAllowed(settings);
+  const governor = await getGovernorState();
+  if (governor.nativeDiscardSyncedTo === allowed) return;
+  // Query only the tabs that still need flipping; steady state costs one
+  // empty query per settings change, not one call per tab.
+  const needingFlip = await chrome.tabs.query({
+    url: ['http://*/*', 'https://*/*'],
+    autoDiscardable: !allowed
+  }).catch(() => []);
+  await Promise.allSettled(needingFlip.map((tab) => chrome.tabs.update(tab.id, { autoDiscardable: allowed })));
+  await setGovernorState({ nativeDiscardSyncedTo: allowed });
+}
+
 async function getSettings() {
   const stored = await chrome.storage.local.get('settings');
   return { ...DEFAULTS, ...(stored.settings || {}) };
@@ -101,6 +123,7 @@ async function setSettings(patch) {
     ? [...new Set(next.whitelist.map((x) => String(x).trim().toLowerCase()).filter(Boolean))]
     : [];
   await chrome.storage.local.set({ settings: next });
+  await syncBrowserDiscardability(next);
   return next;
 }
 
@@ -145,6 +168,7 @@ async function ensureInitialized() {
   if (!stored.stats) writes.stats = { ...STAT_DEFAULTS };
   if (Object.keys(writes).length) await chrome.storage.local.set(writes);
 
+  await syncBrowserDiscardability(await getSettings());
   await chrome.alarms.create(ALARM_GOVERNOR, { periodInMinutes: 1 });
   await chrome.alarms.create(ALARM_DOWNLOADS, { periodInMinutes: 1 });
   await rebuildContextMenus();
@@ -252,6 +276,9 @@ function coldestFirst(tabs) {
 
 async function runGovernor({ forceOthers = false } = {}) {
   const settings = await getSettings();
+  // Minute-cadence re-assertion: repairs tabs opened since the last flip
+  // (they default to browser-discardable) and any flip the SW missed.
+  await syncBrowserDiscardability(settings);
 
   // An explicit click or hotkey is a user decision: it still honours the guard
   // rails (pinned/audible/whitelist/unsaved forms) but not the automatic gates.

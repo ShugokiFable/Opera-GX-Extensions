@@ -1,6 +1,26 @@
 # Changelog
 
+## 1.2.1
+
+Fixed
+- Disabling hibernation now actually disables it. Overdrive's own toggles
+  always gated its sweeps, but Opera's built-in tab sleeping / Chromium memory
+  saver kept discarding tabs under memory pressure regardless - the browser
+  does not consult extension settings. Every web tab is now opted out of
+  native discarding (`tabs.update(autoDiscardable: false)`) whenever all
+  hibernation is off (master off, or both "Auto-hibernate stale tabs" and
+  "RAM Governor" off), and opted back in when any of them is re-enabled.
+  The state re-asserts on startup and each minute-tick so tabs opened after a
+  change are covered too.
+
+Notes
+- The context-menu / `Alt+Shift+S` "Hibernate other tabs" action remains a
+  deliberate manual override: it hibernates even when automatic modes are off,
+  but still honours pinned, audible, whitelisted, and unsaved-form protection.
+
 ## 1.2.0
+
+
 
 Added
 - The long-thread engine is no longer ChatGPT-only. Host profiles now cover
