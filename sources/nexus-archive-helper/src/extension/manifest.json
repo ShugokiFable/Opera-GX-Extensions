@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Nexus Archive Helper",
+  "version": "__VERSION__",
+  "description": "Find and resolve archived, old, hidden-page, and deleted-category Nexus Mods files through official Nexus API and download flows.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "https://api.nexusmods.com/*",
+    "https://www.nexusmods.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Nexus Archive Helper",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.nexusmods.com/*/mods/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon32.png"
+      ],
+      "matches": [
+        "https://www.nexusmods.com/*"
+      ]
+    }
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz86jpLRqUOpYFjU9uSkTvc08G/VyyVVQMiSNKfIIf8UvdE0wYW3pcCA8mkea4QqJvGZPZIfQ0jSHHRmNJj+V/4Hx1q1uyd7oBfhevUAPhTWLfseAPS2Jrg4Aki3fpZMTiaPLhPZwbMaKnRqCd4K6s9aFVySnTUk8lxCSFodO2HKhfIdjwM4KqXsC0eGJWCfeiVIbLZqRvtA4UHMmIP0eeRvn38vHLyVvLPszWb827zRN9T2yTFgTFqoUwhli+NRoxgSDsK3Zl4G7bAoBXdDlfr9FuzrdLf9oXmXp5C3r3khdPhzyj9tGk4xbc3B1wlh9xeWkEDmiA8RVkJSM0r1x3QIDAQAB"
+}

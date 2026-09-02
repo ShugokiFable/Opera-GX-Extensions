@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nexus Archive Helper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="icons/icon48.png" alt="" width="38" height="38">
+        <div>
+          <div class="brand-title">Nexus <strong>Archive Helper</strong></div>
+          <div class="brand-subtitle">Find. Resolve. Download.</div>
+        </div>
+      </div>
+      <div id="quota" class="quota" title="Nexus API quota">API · --</div>
+    </header>
+
+    <nav class="tabs" aria-label="Extension views">
+      <button class="tab active" data-view="resolve">Resolve</button>
+      <button class="tab" data-view="history">History</button>
+      <button class="tab" data-view="settings">Settings</button>
+    </nav>
+
+    <section class="view active" id="view-resolve">
+      <div class="resolve-box">
+        <div class="input-line">
+          <input id="reference" type="text" spellcheck="false" autocomplete="off" placeholder="Paste Nexus URL, nxm:// link, or game:mod:file">
+          <button id="find" class="button primary">Resolve</button>
+        </div>
+        <button id="scanPage" class="scan-button">
+          <span class="scan-icon">⌖</span>
+          <span><strong>Scan current page</strong><small>Detect the Nexus mod/file from your active tab</small></span>
+          <span class="scan-arrow">›</span>
+        </button>
+      </div>
+
+      <div id="status" class="status-line" data-tone="neutral">
+        <span class="status-dot"></span><span id="statusText">Ready to resolve a Nexus file.</span>
+      </div>
+
+      <section id="resultsSection" class="results-section hidden">
+        <div class="results-head">
+          <div><strong id="resultsTitle">Results</strong><span id="resultsMeta"></span></div>
+          <button id="copyReference" class="icon-button" title="Copy compact reference">Copy ref</button>
+        </div>
+        <div id="resultFilters" class="filters" aria-label="Result filters"></div>
+        <div id="warnings" class="warnings"></div>
+        <main id="results" class="results"></main>
+      </section>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-mark">⌁</div>
+        <strong>Archive hunting without the archaeology degree</strong>
+        <p>Use a mod page, exact <code>file_id</code>, <code>nxm://</code> link, or compact reference.</p>
+      </div>
+    </section>
+
+    <section class="view" id="view-history">
+      <div class="section-heading">
+        <div><h2>Recent lookups</h2><p>Your last resolved Nexus references, stored only in this browser.</p></div>
+        <button id="clearHistory" class="button quiet">Clear</button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="settings-block">
+        <div class="section-heading compact">
+          <div><h2>Nexus API key</h2><p>Stored locally in Chromium extension storage.</p></div>
+          <span class="local-chip">LOCAL</span>
+        </div>
+        <label class="field-label" for="apiKey">Personal API key</label>
+        <div class="input-line">
+          <input id="apiKey" type="password" autocomplete="off" placeholder="Paste your Nexus Personal API key">
+          <button id="saveKey" class="button primary">Save + test</button>
+        </div>
+        <div class="settings-actions">
+          <button id="toggleKey" class="link-button">Show/hide key</button>
+          <button id="apiLink" class="link-button">Open Nexus API Access</button>
+        </div>
+        <div id="accountStatus" class="account-card">
+          <span class="account-light"></span>
+          <div><strong>No account validated yet</strong><small>Save and test your API key to verify access.</small></div>
+        </div>
+      </div>
+
+      <div class="settings-block info-block">
+        <h3>How downloads work</h3>
+        <p><strong>Premium:</strong> Nexus can return direct CDN links. <strong>Free:</strong> the helper uses Nexus's official file/NXM flow when a direct API link is not authorized.</p>
+        <p>The helper never attempts to reconstruct files that Nexus has permanently removed.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span><span class="lock">◆</span> API key stays local</span>
+      <span>v__VERSION__</span>
+    </footer>
+  </div>
+
+  <script src="core.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -64,6 +64,23 @@ jobs:
             echo "typescript not a dependency; skipping tsc --noEmit"
           fi
 
+  nexus-archive-helper:
+    name: nexus-archive-helper test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: sources/nexus-archive-helper
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install and test
+        run: |
+          npm ci --registry https://registry.npmjs.org/
+          npm test
+
   tests:
     name: Extension test suites
     runs-on: ubuntu-latest

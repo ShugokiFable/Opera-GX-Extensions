@@ -1,7 +1,8 @@
 # Opera GX Extensions
 
-Eight local-first Manifest V3 extensions for Opera GX and Chromium, plus the
-one-command toolchain that signs and packages them.
+Eight local-first Manifest V3 extensions for Opera GX and Chromium, one
+optional Nexus Mods tool, plus the one-command toolchain that signs and
+packages them.
 
 No telemetry, no analytics, no remote code, no accounts.
 
@@ -24,6 +25,14 @@ Download the `.crx` for what you want from [Release](Release) and drag it onto
 Chrome, Edge and Brave reject any `.crx` without a Web Store publisher
 signature. On those, use the `.zip`: unpack it, then Developer mode → Load
 unpacked.
+
+## Optional extras
+
+Not essential — installed only if you need it.
+
+| Extension | Version | What it does |
+| --- | --- | --- |
+| [Nexus Archive Helper](extensions/nexus-archive-helper) | 1.1.1 | Finds and resolves archived, old, hidden-page and deleted Nexus Mods files via the official Nexus API; in-page scan button, context-menu resolver, recent history |
 
 ## Build
 
@@ -58,6 +67,14 @@ bundle is committed under `extensions/nexus-research`; rebuild it with:
 
 ```
 cd sources/nexus-research-ts && npm install && npm run build
+```
+
+`sources/nexus-archive-helper` is the project behind the optional Nexus Archive
+Helper. Its shipped bundle is committed under `extensions/nexus-archive-helper`;
+rebuild and re-sync it with:
+
+```
+cd sources/nexus-archive-helper && npm ci && npm run sync:opera
 ```
 
 ## Signing keys

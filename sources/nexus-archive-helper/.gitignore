@@ -1,0 +1,17 @@
+# Build/release output
+dist/
+release/
+.tmp-release/
+
+# Private CRX identity key. NEVER COMMIT THIS.
+private/signing-key.pem
+
+# Local/editor noise
+node_modules/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
