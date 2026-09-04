@@ -10,7 +10,7 @@
     "package": "npm run clean && npm run typecheck && npm run build && node package.mjs"
   },
   "dependencies": {
-    "dompurify": "^3.2.7",
+    "dompurify": "^3.4.14",
     "marked": "^15.0.12"
   },
   "devDependencies": {
