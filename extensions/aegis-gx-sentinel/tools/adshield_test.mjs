@@ -105,8 +105,12 @@ calls.length = 0;
 await vm.runInContext("setYoutubeTabBypass(42, true)", context);
 call = calls.find(item => item.type === "session");
 const bypass = call?.args?.addRules?.[0];
+function httpHostEquals(value, host) {
+  const url = new URL(`https://${value}`);
+  return (url.protocol === "http:" || url.protocol === "https:") && url.hostname === host;
+}
 if (!bypass || bypass.priority !== 900 || !bypass.condition.tabIds.includes(42)) throw new Error("YouTube tab bypass rule was not scoped correctly");
-if (!bypass.condition.initiatorDomains.includes("youtube.com")) throw new Error("YouTube tab bypass lacks initiator scoping");
+if (!(bypass.condition.initiatorDomains || []).some(domain => httpHostEquals(domain, "youtube.com"))) throw new Error("YouTube tab bypass lacks initiator scoping");
 if (bypass.priority >= 10000) throw new Error("YouTube fallback would override threat rules");
 
 const guardSource = fs.readFileSync(path.join(root, "content/guard.js"), "utf8");

@@ -54,8 +54,10 @@ It deliberately does not defeat DRM, obtain protected decryption keys, bypass pa
 - Binds only to `127.0.0.1`.
 - Requires a random per-install pairing token.
 - Accepts browser calls only from extension origins.
-- Rejects non-HTTP URLs and private-network targets by default.
-- Revalidates redirects to reduce SSRF risk.
+- Rejects non-HTTP(S) URLs and any host whose resolved addresses are not globally routable (`ip.is_global`).
+- Reconstructs the fetch URL from parsed scheme/host/port/path/query so the raw user string is never passed to the HTTP client.
+- Revalidates redirects (and the final response URL) to reduce SSRF and DNS-rebinding risk.
+- Strips CR/LF from every HTTP response header value.
 - Redacts Cookie and Authorization values from logs and metadata.
 - Sends no browsing or download data to a NebulaGrab cloud service.
 

@@ -49,10 +49,14 @@ if (rules.length !== 7) throw new Error(`Expected 7 batched rules, received ${ru
 if (rules[0].action.type !== "allowAllRequests" || rules[0].priority !== 30000) {
   throw new Error("Full allowlist rule invariant failed");
 }
-const adAllow = rules.find(rule => rule.action.type === "allow" && rule.condition.initiatorDomains?.includes("ads-ok.example"));
+function httpHostEquals(value, host) {
+  const url = new URL(`https://${value}`);
+  return (url.protocol === "http:" || url.protocol === "https:") && url.hostname === host;
+}
+const adAllow = rules.find(rule => rule.action.type === "allow" && (rule.condition.initiatorDomains || []).some(domain => httpHostEquals(domain, "ads-ok.example")));
 if (!adAllow || adAllow.priority >= 10000 || adAllow.priority <= 100) throw new Error("Ad-only allowlist priority invariant failed");
-const adBlock = rules.find(rule => rule.priority === 100 && rule.condition.requestDomains?.includes("ad0.example"));
-if (!adBlock?.condition?.excludedInitiatorDomains?.includes("youtube.com")) throw new Error("General ad rules do not exclude YouTube");
+const adBlock = rules.find(rule => rule.priority === 100 && (rule.condition.requestDomains || []).some(domain => httpHostEquals(domain, "ad0.example")));
+if (!(adBlock?.condition?.excludedInitiatorDomains || []).some(domain => httpHostEquals(domain, "youtube.com"))) throw new Error("General ad rules do not exclude YouTube");
 
 const phishing = evaluate("analyzeUrl('http://paypal-login-verify.example.zip/account/security')");
 if (phishing.score < 55) throw new Error(`Phishing heuristic under-scored sample URL: ${phishing.score}`);
