@@ -202,9 +202,13 @@ function send(message) {
 
   const site = await send({ type: 'GX_SET_SITE_PROTECTION', protected: true });
   assert.equal(site.protected, true);
-  assert.ok(site.settings.whitelist.includes('chatgpt.com'), 'active host added to the never-hibernate list');
+  const whitelistHasHost = (whitelist, host) => (whitelist || []).some((entry) => {
+    const url = new URL(`https://${entry}`);
+    return (url.protocol === 'http:' || url.protocol === 'https:') && url.hostname === host;
+  });
+  assert.ok(whitelistHasHost(site.settings.whitelist, 'chatgpt.com'), 'active host added to the never-hibernate list');
   const unset = await send({ type: 'GX_SET_SITE_PROTECTION', protected: false });
-  assert.ok(!unset.settings.whitelist.includes('chatgpt.com'), 'site protection can be removed again');
+  assert.ok(!whitelistHasHost(unset.settings.whitelist, 'chatgpt.com'), 'site protection can be removed again');
 
   console.log('GX Overdrive background smoke test: PASS');
 })().catch((error) => {

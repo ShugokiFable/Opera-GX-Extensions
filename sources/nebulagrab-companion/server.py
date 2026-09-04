@@ -47,6 +47,12 @@ HEADER_ALLOWLIST = {
 }
 SENSITIVE_HEADERS = {"authorization", "cookie"}
 BROWSER_NAMES = {"brave", "chrome", "chromium", "edge", "firefox", "opera", "vivaldi", "whale"}
+# Filename sanitizer: disjoint unsafe-char class, then rstrip (not `[. ]+$`, which is quadratic).
+_UNSAFE_FILENAME_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+_KNOWN_MEDIA_EXT = re.compile(
+    r"\.(?:mp4|mkv|webm|mov|m4v|avi|flv|ts|m2ts|mp3|m4a|aac|flac|wav|ogg|opus|jpg|jpeg|png|gif|webp|avif)$",
+    re.IGNORECASE,
+)
 
 JOBS: dict[str, "Job"] = {}
 JOBS_LOCK = threading.Lock()
@@ -190,13 +196,13 @@ def ytdlp_impersonation_available() -> bool:
 
 
 def sanitize_filename(value: str) -> str:
-    value = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", value or "media")
-    value = re.sub(r"[. ]+$", "", value).strip()
+    value = _UNSAFE_FILENAME_CHARS.sub("_", value or "media")
+    value = value.rstrip(". ").strip()
     return value[:180] or "media"
 
 
 def strip_known_extension(value: str) -> str:
-    return re.sub(r"\.(?:mp4|mkv|webm|mov|m4v|avi|flv|ts|m2ts|mp3|m4a|aac|flac|wav|ogg|opus|jpg|jpeg|png|gif|webp|avif)$", "", value, flags=re.I)
+    return _KNOWN_MEDIA_EXT.sub("", value)
 
 
 def extension_from_url(url: str) -> str:
@@ -318,36 +324,92 @@ def durable_flush(handle: BinaryIO, pending: int, threshold: int) -> int:
     return pending
 
 
+def sanitize_header_value(value: str) -> str:
+    return str(value).replace("\r", "").replace("\n", "")
+
+
 def is_extension_origin(origin: str) -> bool:
-    return not origin or origin.startswith(ALLOWED_ORIGIN_PREFIXES)
+    cleaned = sanitize_header_value(origin)
+    if cleaned != str(origin):
+        return False
+    return not cleaned or cleaned.startswith(ALLOWED_ORIGIN_PREFIXES)
+
+
+def _ascii_hostname(hostname: str) -> str:
+    try:
+        ipaddress.ip_address(hostname)
+        return hostname
+    except ValueError:
+        try:
+            return hostname.encode("idna").decode("ascii").lower()
+        except UnicodeError as exc:
+            raise ValueError("Invalid remote URL hostname.") from exc
+
+
+def reconstruct_remote_url(url: str) -> str:
+    parsed = urllib.parse.urlsplit(url)
+    scheme = (parsed.scheme or "").lower()
+    if scheme not in {"http", "https"}:
+        raise ValueError("Only HTTP and HTTPS media URLs are allowed.")
+    hostname = parsed.hostname
+    if not hostname or parsed.username or parsed.password:
+        raise ValueError("Invalid remote URL.")
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("Invalid remote URL.") from exc
+    host = _ascii_hostname(hostname)
+    try:
+        ipaddress.ip_address(host)
+        netloc_host = f"[{host}]" if ":" in host else host
+    except ValueError:
+        netloc_host = host
+    netloc = f"{netloc_host}:{port}" if port is not None else netloc_host
+    return urllib.parse.urlunsplit((scheme, netloc, parsed.path, parsed.query, ""))
 
 
 def validate_remote_url(url: str) -> str:
-    parsed = urllib.parse.urlparse(url)
-    if parsed.scheme not in {"http", "https"}:
-        raise ValueError("Only HTTP and HTTPS media URLs are allowed.")
-    if not parsed.hostname or parsed.username or parsed.password:
+    safe_url = reconstruct_remote_url(url)
+    parsed = urllib.parse.urlsplit(safe_url)
+    hostname = parsed.hostname
+    if not hostname:
         raise ValueError("Invalid remote URL.")
 
     if ALLOW_PRIVATE:
-        return url
+        return safe_url
 
     try:
-        infos = socket.getaddrinfo(parsed.hostname, parsed.port or (443 if parsed.scheme == "https" else 80), type=socket.SOCK_STREAM)
+        infos = socket.getaddrinfo(
+            hostname,
+            parsed.port or (443 if parsed.scheme == "https" else 80),
+            type=socket.SOCK_STREAM,
+        )
     except socket.gaierror as exc:
         raise ValueError(f"Could not resolve media host: {exc}") from exc
-
+    if not infos:
+        raise ValueError("Could not resolve media host.")
     for info in infos:
         ip = ipaddress.ip_address(info[4][0])
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
+        # Require a globally routable unicast address. `is_global` is stricter
+        # than the private/loopback set (CGNAT, documentation, benchmark), but
+        # some Python versions still report multicast as global.
+        if (
+            not ip.is_global
+            or ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+            or ip.is_unspecified
+        ):
             raise ValueError("Private-network and localhost media URLs are blocked by default.")
-    return url
+    return safe_url
 
 
 class SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req: urllib.request.Request, fp: BinaryIO, code: int, msg: str, headers: email.message.Message, newurl: str) -> urllib.request.Request | None:
-        validate_remote_url(newurl)
-        return super().redirect_request(req, fp, code, msg, headers, newurl)
+        safe = validate_remote_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, safe)
 
 
 OPENER = urllib.request.build_opener(SafeRedirectHandler())
@@ -362,7 +424,7 @@ def safe_request_headers(raw: Any, referrer: str = "") -> dict[str, str]:
             if name in HEADER_ALLOWLIST and text and len(text) <= 16_384:
                 result["-".join(part.capitalize() for part in name.split("-"))] = text
     if referrer.startswith(("http://", "https://")) and "Referer" not in result:
-        result["Referer"] = referrer
+        result["Referer"] = sanitize_header_value(referrer)
     return result
 
 
@@ -371,8 +433,8 @@ def redacted_headers(headers: dict[str, str]) -> dict[str, str]:
 
 
 def open_remote(url: str, headers: dict[str, str], method: str = "GET", timeout: int = 35) -> Any:
-    validate_remote_url(url)
-    request = urllib.request.Request(url, headers=headers, method=method)
+    safe_url = validate_remote_url(url)
+    request = urllib.request.Request(safe_url, headers=headers, method=method)
     response = OPENER.open(request, timeout=timeout)
     validate_remote_url(response.geturl())
     return response
@@ -1467,11 +1529,14 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args: Any) -> None:
         sys.stdout.write("[%s] %s\n" % (self.log_date_time_string(), fmt % args))
 
+    def send_header(self, keyword: str, value: str) -> None:
+        super().send_header(sanitize_header_value(keyword), sanitize_header_value(value))
+
     def _origin(self) -> str:
-        return self.headers.get("Origin", "")
+        return sanitize_header_value(self.headers.get("Origin", ""))
 
     def _cors(self) -> None:
-        origin = self._origin()
+        origin = sanitize_header_value(self._origin())
         if is_extension_origin(origin) and origin:
             self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Vary", "Origin")

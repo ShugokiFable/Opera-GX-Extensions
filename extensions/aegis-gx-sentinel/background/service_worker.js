@@ -166,12 +166,33 @@ function makeEndpointId(endpoint, index = 0) {
   return `relay-${(hash >>> 0).toString(36)}`;
 }
 
+function unwrapIpv6Hostname(hostname) {
+  const host = String(hostname || "");
+  if (host.startsWith("[") && host.endsWith("]") && host.includes(":")) {
+    return host.slice(1, -1);
+  }
+  return host;
+}
+
+function parseRelayHost(raw) {
+  const text = String(raw || "").trim();
+  if (!text || text.length > 253 || /[\s/\\@]/.test(text)) return "";
+  try {
+    const bareIpv6 = text.includes(":") && !text.startsWith("[") && !text.includes(".");
+    const url = new URL(`https://${bareIpv6 ? `[${text}]` : text}`);
+    if (url.username || url.password || url.port) return "";
+    return unwrapIpv6Hostname(url.hostname).toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
 function sanitizeEndpoint(endpoint, index = 0) {
   const source = endpoint && typeof endpoint === "object" ? endpoint : {};
   const scheme = PROXY_SCHEMES.has(String(source.scheme || "").toLowerCase())
     ? String(source.scheme).toLowerCase()
     : "https";
-  const host = String(source.host || "").trim().toLowerCase().replace(/^\[|\]$/g, "");
+  const host = parseRelayHost(source.host);
   const fallbackPort = scheme === "https" ? 443 : scheme.startsWith("socks") ? 1080 : 80;
   const requestedPort = Number(source.port || fallbackPort);
   const port = Number.isInteger(requestedPort) && requestedPort >= 1 && requestedPort <= 65535
@@ -179,12 +200,11 @@ function sanitizeEndpoint(endpoint, index = 0) {
     : fallbackPort;
   const name = String(source.name || host || `Relay ${index + 1}`).trim().slice(0, 80);
   const username = String(source.username || "").slice(0, 200);
-  const validHost = host && host.length <= 253 && !/[\s/\\@]/.test(host);
   return {
     id: String(source.id || makeEndpointId({ scheme, host, port }, index)).slice(0, 80),
     name,
     scheme,
-    host: validHost ? host : "",
+    host,
     port,
     username,
     enabled: source.enabled !== false,
@@ -235,21 +255,21 @@ function normalizeAdblockConfig(adblock) {
   return out;
 }
 function endpointPacToken(endpoint) {
-  const host = endpoint.host.includes(":") ? `[${endpoint.host}]` : endpoint.host;
-  const address = `${host}:${endpoint.port}`;
+  const host = unwrapIpv6Hostname(endpoint.host);
+  const address = `${host.includes(":") ? `[${host}]` : host}:${endpoint.port}`;
   if (endpoint.scheme === "https") return `HTTPS ${address}`;
   if (endpoint.scheme === "socks5") return `SOCKS5 ${address}`;
   if (endpoint.scheme === "socks4") return `SOCKS4 ${address}`;
   return `PROXY ${address}`;
 }
 
+const PAC_LOCAL_BYPASS = 'var h = String(host || "").toLowerCase(); if (isPlainHostName(h) || h === "localhost" || dnsDomainIs(h, ".localhost") || dnsDomainIs(h, ".local") || shExpMatch(h, "127.*") || shExpMatch(h, "10.*") || shExpMatch(h, "192.168.*") || shExpMatch(h, "172.16.*") || shExpMatch(h, "172.17.*") || shExpMatch(h, "172.18.*") || shExpMatch(h, "172.19.*") || shExpMatch(h, "172.2?.*") || shExpMatch(h, "172.30.*") || shExpMatch(h, "172.31.*") || h === "::1" || h.indexOf("fc") === 0 || h.indexOf("fd") === 0 || h.indexOf("fe8") === 0 || h.indexOf("fe9") === 0 || h.indexOf("fea") === 0 || h.indexOf("feb") === 0) return "DIRECT";';
+
 function buildRelayPacScript(endpoint, relay) {
   const token = endpointPacToken(endpoint);
-  const route = relay.failClosed ? token : `${token}; DIRECT`;
-  const bypass = relay.bypassLocal
-    ? `var h = String(host || "").toLowerCase(); if (isPlainHostName(h) || h === "localhost" || dnsDomainIs(h, ".localhost") || dnsDomainIs(h, ".local") || shExpMatch(h, "127.*") || shExpMatch(h, "10.*") || shExpMatch(h, "192.168.*") || shExpMatch(h, "172.16.*") || shExpMatch(h, "172.17.*") || shExpMatch(h, "172.18.*") || shExpMatch(h, "172.19.*") || shExpMatch(h, "172.2?.*") || shExpMatch(h, "172.30.*") || shExpMatch(h, "172.31.*") || h === "::1" || h.indexOf("fc") === 0 || h.indexOf("fd") === 0 || h.indexOf("fe8") === 0 || h.indexOf("fe9") === 0 || h.indexOf("fea") === 0 || h.indexOf("feb") === 0) return "DIRECT";`
-    : "";
-  return `function FindProxyForURL(url, host) { ${bypass} return ${JSON.stringify(route)}; }`;
+  const route = JSON.stringify(relay.failClosed ? token : `${token}; DIRECT`);
+  const prefix = relay.bypassLocal ? PAC_LOCAL_BYPASS : "";
+  return "function FindProxyForURL(url, host) { " + prefix + " return " + route + "; }";
 }
 
 async function proxyControlState() {
@@ -790,7 +810,7 @@ async function getThreatSet() {
 
 function isPrivateOrLocalHost(hostname) {
   if (!hostname) return true;
-  const bareHost = hostname.replace(/^\[|\]$/g, "");
+  const bareHost = unwrapIpv6Hostname(hostname);
   if (bareHost === "localhost" || bareHost.endsWith(".localhost") || bareHost.endsWith(".local")) return true;
   if (/^127\./.test(bareHost) || /^10\./.test(bareHost) || /^192\.168\./.test(bareHost)) return true;
   const match = bareHost.match(/^172\.(\d+)\./);
@@ -800,7 +820,7 @@ function isPrivateOrLocalHost(hostname) {
 }
 
 function isIpHost(hostname) {
-  const bareHost = hostname.replace(/^\[|\]$/g, "");
+  const bareHost = unwrapIpv6Hostname(hostname);
   if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(bareHost)) {
     return bareHost.split(".").every(part => Number(part) >= 0 && Number(part) <= 255);
   }
